@@ -1,8 +1,8 @@
 package com.yovelb;
 
 public class Simulation {
-    private final int width;
-    private final int height;
+    public final int width;
+    public final int height;
     private int[][] board;
 
     public Simulation(int width, int height) {
