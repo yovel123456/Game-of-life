@@ -1,6 +1,9 @@
 package com.yovelb;
 
 public class Simulation {
+    public static int ALIVE = 1;
+    public static int DEAD = 0;
+
     public final int width;
     public final int height;
     private int[][] board;
@@ -8,7 +11,6 @@ public class Simulation {
     public Simulation(int width, int height) {
         this.width = width;
         this.height = height;
-
         this.board = new int[width][height];
     }
 
@@ -17,7 +19,7 @@ public class Simulation {
         for (int y = 0; y < height; y++) {
             StringBuilder line = new StringBuilder("|");
             for (int x = 0; x < width; x++) {
-                if (this.board[x][y] == 0) {
+                if (this.board[x][y] == DEAD) {
                     line.append(".");
                 } else {
                     line.append("*");
@@ -27,14 +29,6 @@ public class Simulation {
             System.out.println(line);
         }
         System.out.println("____\n");
-    }
-
-    public void setAlive(int x, int y) {
-        this.board[x][y] = 1;
-    }
-
-    public void setDead(int x, int y) {
-        this.board[x][y] = 0;
     }
 
     public int countAliveNeighbours(int x, int y) {
@@ -59,17 +53,17 @@ public class Simulation {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 int aliveNeighbours = countAliveNeighbours(x, y);
-                if (getState(x, y) == 1) {
+                if (getState(x, y) == ALIVE) {
                     if (aliveNeighbours < 2) {
-                        newBoard[x][y] = 0;
+                        newBoard[x][y] = DEAD;
                     } else if (aliveNeighbours == 2 || aliveNeighbours == 3) {
-                        newBoard[x][y] = 1;
+                        newBoard[x][y] = ALIVE;
                     } else if (aliveNeighbours > 3) {
-                        newBoard[x][y] = 0;
+                        newBoard[x][y] = DEAD;
                     }
                 } else {
                     if (aliveNeighbours == 3) {
-                        newBoard[x][y] = 1;
+                        newBoard[x][y] = ALIVE;
                     }
                 }
             }
@@ -77,14 +71,26 @@ public class Simulation {
         this.board = newBoard;
     }
 
+    public void clearBoard() {
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                this.board[x][y] = DEAD;
+            }
+        }
+    }
+
     public int getState(int x, int y) {
-        if (x < 0 || x >= width) {
-            return 0;
+        if ((x > 0 && x < width) && (y > 0 && y < height)) {
+            return board[x][y];
         }
-        if (y < 0 || y >= height) {
-            return 0;
+        // out of bounds not suppose to go here.
+        return 0;
+    }
+
+    public void setState(int x, int y, int state) {
+        if (((x > 0 && x < width) && (y > 0 && y < height)) && (state == 0 || state == 1)) {
+            board[x][y] = state;
         }
-        return board[x][y];
     }
 
     @Override

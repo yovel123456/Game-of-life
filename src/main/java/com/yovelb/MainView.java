@@ -1,46 +1,61 @@
 package com.yovelb;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
+import javafx.scene.transform.NonInvertibleTransformException;
 
 public class MainView extends VBox {
-    private Button stepButton;
     private Canvas canvas;
 
     private Affine affine;
 
     private Simulation simulation;
 
+    private int drawMode = 1;
+
     public MainView() {
-        this.stepButton = new Button("Step");
-        this.stepButton.setOnAction(actionEvent -> {
-            simulation.step();
+
+        Toolbar toolbar = new Toolbar(this);
+
+        canvas = new Canvas(400, 400);
+        canvas.setOnMouseClicked(this::handleDraw);
+        canvas.setOnMouseDragged(this::handleDraw);
+
+        this.setOnKeyPressed(this::onKeyPressed);
+
+        getChildren().addAll(toolbar ,canvas);
+
+        affine = new Affine();
+        affine.appendScale(400 / 10f, 400 / 10f);
+
+        simulation = new Simulation(10, 10);
+    }
+
+    private void onKeyPressed(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.D) {
+            drawMode = 1;
+        } else if (keyEvent.getCode() == KeyCode.E) {
+            drawMode = 0;
+        }
+    }
+
+    private void handleDraw(MouseEvent event) {
+        Point2D coordinates = null;
+        try {
+            coordinates = this.affine.inverseTransform(event.getX(), event.getY());
+            simulation.setState((int) coordinates.getX(), (int) coordinates.getY(), drawMode);
             draw();
-        });
-
-        this.canvas = new Canvas(400, 400);
-
-        this.getChildren().addAll(stepButton, canvas);
-
-        this.affine = new Affine();
-        this.affine.appendScale(400 / 10f, 400 / 10f);
-
-        this.simulation = new Simulation(10, 10);
-
-        simulation.setAlive(2, 2);
-        simulation.setAlive(3, 2);
-        simulation.setAlive(4, 2);
-
-        simulation.setAlive(5, 5);
-        simulation.setAlive(5, 6);
-        simulation.setAlive(6, 5);
-        simulation.setAlive(6, 6);
+        } catch (NonInvertibleTransformException e) {
+            System.out.println("Could not invert transform");
+        }
     }
 
     public void draw() {
@@ -53,7 +68,7 @@ public class MainView extends VBox {
         g.setFill(Color.BLACK);
         for (int x = 0; x < this.simulation.width; x++) {
             for (int y = 0; y < this.simulation.height; y++) {
-                if (this.simulation.getState(x, y) == 1) {
+                if (this.simulation.getState(x, y) == Simulation.ALIVE) {
                     g.fillRect(x, y, 1, 1);
                 }
             }
@@ -66,5 +81,13 @@ public class MainView extends VBox {
         for (int y = 0; y <= this.simulation.height; y++) {
             g.strokeLine(0, y, 10, y);
         }
+    }
+
+    public void setDrawMode(int mode) {
+        this.drawMode = mode;
+    }
+
+    public Simulation getSimulation() {
+        return simulation;
     }
 }
