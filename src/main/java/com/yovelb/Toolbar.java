@@ -5,8 +5,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
 
 public class Toolbar extends ToolBar {
-
-
     private MainView mainView;
 
     public Toolbar(MainView mainView) {
@@ -17,6 +15,8 @@ public class Toolbar extends ToolBar {
         erase.setOnAction(this::handleErase);
         Button step = new Button("Step");
         step.setOnAction(this::handleStep);
+
+        getItems().addAll(draw, erase, step);
     }
 
     private void handleDraw(ActionEvent event) {

@@ -3,59 +3,80 @@ package com.yovelb;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 
 public class MainView extends VBox {
-    private Canvas canvas;
+    private final Canvas canvas;
+    private final InfoBar infoBar;
 
-    private Affine affine;
+    private final Affine affine;
 
-    private Simulation simulation;
+    private final Simulation simulation;
 
     private int drawMode = 1;
 
     public MainView() {
-
-        Toolbar toolbar = new Toolbar(this);
-
-        canvas = new Canvas(400, 400);
-        canvas.setOnMouseClicked(this::handleDraw);
-        canvas.setOnMouseDragged(this::handleDraw);
+        this.canvas = new Canvas(400, 400);
+        this.canvas.setOnMouseClicked(this::handleDraw);
+        this.canvas.setOnMouseDragged(this::handleDraw);
+        this.canvas.setOnMouseMoved(this::handleMoved);
 
         this.setOnKeyPressed(this::onKeyPressed);
 
-        getChildren().addAll(toolbar ,canvas);
+        Toolbar toolbar = new Toolbar(this);
 
-        affine = new Affine();
-        affine.appendScale(400 / 10f, 400 / 10f);
+        this.infoBar = new InfoBar();
+        infoBar.setDrawMode(drawMode);
+        infoBar.setCursorPosition(0, 0);
 
-        simulation = new Simulation(10, 10);
+        Pane spacer = new Pane();
+        spacer.setMinSize(0, 0);
+        spacer.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        VBox.setVgrow(spacer, Priority.ALWAYS);
+
+        getChildren().addAll(toolbar,canvas, spacer, infoBar);
+
+        this.affine = new Affine();
+        this.affine.appendScale(400 / 10f, 400 / 10f);
+
+        this.simulation = new Simulation(10, 10);
     }
 
     private void onKeyPressed(KeyEvent keyEvent) {
         if (keyEvent.getCode() == KeyCode.D) {
-            drawMode = 1;
+            setDrawMode(1);
         } else if (keyEvent.getCode() == KeyCode.E) {
-            drawMode = 0;
+            setDrawMode(0);
         }
     }
 
+    private void handleMoved(MouseEvent event) {
+        Point2D coordinates = getSimulationCoordinates(event);
+        infoBar.setCursorPosition((int) coordinates.getX(), (int) coordinates.getY());
+    }
+
     private void handleDraw(MouseEvent event) {
-        Point2D coordinates = null;
+        Point2D coordinates = getSimulationCoordinates(event);
+        simulation.setState((int) coordinates.getX(), (int) coordinates.getY(), drawMode);
+        draw();
+    }
+
+    private Point2D getSimulationCoordinates(MouseEvent event) {
+        Point2D coordinates;
         try {
             coordinates = this.affine.inverseTransform(event.getX(), event.getY());
-            simulation.setState((int) coordinates.getX(), (int) coordinates.getY(), drawMode);
-            draw();
         } catch (NonInvertibleTransformException e) {
-            System.out.println("Could not invert transform");
+            throw new RuntimeException("Non Invertible transform");
         }
+        return coordinates;
     }
 
     public void draw() {
@@ -85,6 +106,7 @@ public class MainView extends VBox {
 
     public void setDrawMode(int mode) {
         this.drawMode = mode;
+        this.infoBar.setDrawMode(drawMode);
     }
 
     public Simulation getSimulation() {

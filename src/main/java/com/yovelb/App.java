@@ -8,7 +8,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) {
         MainView mainView = new MainView();
-        var scene = new Scene(mainView, 640, 480);
+        Scene scene = new Scene(mainView, 640, 480);
         stage.setScene(scene);
         stage.show();
 
