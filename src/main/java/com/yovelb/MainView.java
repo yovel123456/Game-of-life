@@ -14,14 +14,21 @@ import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 
 public class MainView extends VBox {
+    public static final int EDITING = 0;
+    public static final int SIMULATING = 1;
+
     private final Canvas canvas;
     private final InfoBar infoBar;
 
     private final Affine affine;
 
-    private final Simulation simulation;
+    private Simulation simulation;
+    private Simulation initialSimulation;
+    private Simulator simulator;
+
 
     private int drawMode = 1;
+    private int applicationState = EDITING;
 
     public MainView() {
         this.canvas = new Canvas(400, 400);
@@ -47,7 +54,8 @@ public class MainView extends VBox {
         this.affine = new Affine();
         this.affine.appendScale(400 / 10f, 400 / 10f);
 
-        this.simulation = new Simulation(10, 10);
+        this.initialSimulation = new Simulation(10, 10);
+        this.simulation = Simulation.copy(this.initialSimulation);
     }
 
     private void onKeyPressed(KeyEvent keyEvent) {
@@ -64,8 +72,11 @@ public class MainView extends VBox {
     }
 
     private void handleDraw(MouseEvent event) {
+        if (applicationState == SIMULATING) {
+            return;
+        }
         Point2D coordinates = getSimulationCoordinates(event);
-        simulation.setState((int) coordinates.getX(), (int) coordinates.getY(), drawMode);
+        initialSimulation.setState((int) coordinates.getX(), (int) coordinates.getY(), drawMode);
         draw();
     }
 
@@ -86,14 +97,12 @@ public class MainView extends VBox {
         g.setFill(Color.LIGHTGRAY);
         g.fillRect(0, 0, 400, 400);
 
-        g.setFill(Color.BLACK);
-        for (int x = 0; x < this.simulation.width; x++) {
-            for (int y = 0; y < this.simulation.height; y++) {
-                if (this.simulation.getState(x, y) == Simulation.ALIVE) {
-                    g.fillRect(x, y, 1, 1);
-                }
-            }
+        if (applicationState == EDITING) {
+            drawSimulation(initialSimulation);
+        } else {
+            drawSimulation(simulation);
         }
+
         g.setStroke(Color.GRAY);
         g.setLineWidth(0.05);
         for (int x = 0; x <= this.simulation.width; x++) {
@@ -104,12 +113,40 @@ public class MainView extends VBox {
         }
     }
 
+    private void drawSimulation(Simulation simulationToDraw) {
+        System.out.println(simulationToDraw.getState(0, 0));
+        GraphicsContext g = this.canvas.getGraphicsContext2D();
+        g.setFill(Color.BLACK);
+        for (int x = 0; x < simulationToDraw.width; x++) {
+            for (int y = 0; y < simulationToDraw.height; y++) {
+                if (simulationToDraw.getState(x, y) == Simulation.ALIVE) {
+                    g.fillRect(x, y, 1, 1);
+                }
+            }
+        }
+    }
+
+    public Simulation getSimulation() {
+        return simulation;
+    }
+
+    public Simulator getSimulator() {
+        return simulator;
+    }
+
     public void setDrawMode(int mode) {
         this.drawMode = mode;
         this.infoBar.setDrawMode(drawMode);
     }
 
-    public Simulation getSimulation() {
-        return simulation;
+    public void setApplicationState(int applicationState) {
+        if (this.applicationState == applicationState) {
+            return;
+        }
+        if (applicationState == SIMULATING) {
+            this.simulation = Simulation.copy(this.initialSimulation);
+            this.simulator = new Simulator(this, simulation);
+        }
+        this.applicationState = applicationState;
     }
 }

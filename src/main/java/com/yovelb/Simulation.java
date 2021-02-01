@@ -14,6 +14,16 @@ public class Simulation {
         this.board = new int[width][height];
     }
 
+    public static Simulation copy(Simulation simulation) {
+        Simulation copy = new Simulation(simulation.width, simulation.height);
+        for (int x = 0; x < simulation.width; x++) {
+            for (int y = 0; y < simulation.height; y++) {
+                copy.setState(x, y, simulation.getState(x, y));
+            }
+        }
+        return copy;
+    }
+
     public void printBoard() {
         System.out.println("____");
         for (int y = 0; y < height; y++) {
@@ -80,17 +90,17 @@ public class Simulation {
     }
 
     public int getState(int x, int y) {
-        if ((x > 0 && x < width) && (y > 0 && y < height)) {
-            return board[x][y];
+        if ((x < 0 || x >= width) || (y < 0 || y >= height)) {
+            return DEAD;
         }
-        // out of bounds not suppose to go here.
-        return 0;
+        return this.board[x][y];
     }
 
     public void setState(int x, int y, int state) {
-        if (((x > 0 && x < width) && (y > 0 && y < height)) && (state == 0 || state == 1)) {
-            board[x][y] = state;
+        if ((x < 0 || x >= width) || (y < 0 || y >= height)) {
+            return;
         }
+        this.board[x][y] = state;
     }
 
     @Override
