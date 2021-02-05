@@ -1,0 +1,2 @@
+# GameOfLifeSimulator
+A javafx game
