@@ -1,11 +1,15 @@
 package com.yovelb;
 
+import com.yovelb.model.CellState;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
 
+import static com.yovelb.model.CellState.*;
+
 public class Toolbar extends ToolBar {
     private MainView mainView;
+    private Simulator simulator;
 
     public Toolbar(MainView mainView) {
         this.mainView = mainView;
@@ -26,29 +30,37 @@ public class Toolbar extends ToolBar {
     }
 
     private void handleDraw(ActionEvent event) {
-        mainView.setDrawMode(1);
+        mainView.setDrawMode(ALIVE);
     }
 
     private void handleErase(ActionEvent event) {
-        mainView.setDrawMode(0);
+        mainView.setDrawMode(DEAD);
     }
 
     private void handleStep(ActionEvent event) {
-        mainView.setApplicationState(MainView.SIMULATING);
+        switchToSimulatingState();
         mainView.getSimulation().step();
         mainView.draw();
     }
     private void handleReset(ActionEvent event) {
         mainView.setApplicationState(MainView.EDITING);
+        simulator = null;
         mainView.draw();
     }
     private void handleStart(ActionEvent event) {
-        mainView.setApplicationState(MainView.SIMULATING);
-        mainView.getSimulator().start();
+        switchToSimulatingState();
+        simulator.start();
     }
 
     private void handleStop(ActionEvent event) {
-        mainView.getSimulator().stop();
+        simulator.stop();
+    }
+
+    private void switchToSimulatingState() {
+        if (mainView.getApplicationState() == MainView.EDITING) {
+            mainView.setApplicationState(MainView.SIMULATING);
+            simulator = new Simulator(mainView, mainView.getSimulation());
+        }
     }
 
 }

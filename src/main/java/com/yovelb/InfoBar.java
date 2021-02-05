@@ -1,5 +1,6 @@
 package com.yovelb;
 
+import com.yovelb.model.CellState;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -23,8 +24,8 @@ public class InfoBar extends HBox {
 
         getChildren().addAll(cursor, editingTool);
     }
-    public void setDrawMode(int drawMode) {
-        editingTool.setText(String.format(drawModeFormat, (drawMode == 1) ? "Drawing" : "Erasing"));
+    public void setDrawMode(CellState drawMode) {
+        editingTool.setText(String.format(drawModeFormat, (drawMode == CellState.ALIVE) ? "Drawing" : "Erasing"));
     }
 
     public void setCursorPosition(int x, int y) {
