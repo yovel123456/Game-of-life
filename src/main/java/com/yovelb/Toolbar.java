@@ -1,8 +1,10 @@
 package com.yovelb;
 
 import com.yovelb.model.CellState;
+import com.yovelb.model.StandardRule;
 import com.yovelb.viewmodel.ApplicationState;
 import com.yovelb.viewmodel.ApplicationViewModel;
+import com.yovelb.viewmodel.BoardViewModel;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
@@ -12,11 +14,13 @@ import static com.yovelb.model.CellState.*;
 public class Toolbar extends ToolBar {
     private MainView mainView;
     private ApplicationViewModel applicationViewModel;
+    private BoardViewModel boardViewModel;
     private Simulator simulator;
 
-    public Toolbar(MainView mainView, ApplicationViewModel applicationViewModel) {
+    public Toolbar(MainView mainView, ApplicationViewModel applicationViewModel, BoardViewModel boardViewModel) {
         this.mainView = mainView;
         this.applicationViewModel = applicationViewModel;
+        this.boardViewModel = boardViewModel;
         Button draw = new Button("Draw");
         draw.setOnAction(this::handleDraw);
         Button erase = new Button("Erase");
@@ -43,13 +47,12 @@ public class Toolbar extends ToolBar {
 
     private void handleStep(ActionEvent event) {
         switchToSimulatingState();
-        mainView.getSimulation().step();
-        mainView.draw();
+        this.simulator.doStep();
+
     }
     private void handleReset(ActionEvent event) {
         this.applicationViewModel.setCurrentState(ApplicationState.EDITING);
         simulator = null;
-        mainView.draw();
     }
     private void handleStart(ActionEvent event) {
         switchToSimulatingState();
@@ -62,6 +65,7 @@ public class Toolbar extends ToolBar {
 
     private void switchToSimulatingState() {
         this.applicationViewModel.setCurrentState(ApplicationState.SIMULATING);
-        this.simulator = new Simulator(mainView, mainView.getSimulation());
+        Simulation simulation = new Simulation(boardViewModel.getBoard(), new StandardRule());
+        this.simulator = new Simulator(this.boardViewModel, simulation);
     }
 }
