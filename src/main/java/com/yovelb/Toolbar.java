@@ -1,6 +1,8 @@
 package com.yovelb;
 
 import com.yovelb.model.CellState;
+import com.yovelb.viewmodel.ApplicationState;
+import com.yovelb.viewmodel.ApplicationViewModel;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
@@ -9,10 +11,12 @@ import static com.yovelb.model.CellState.*;
 
 public class Toolbar extends ToolBar {
     private MainView mainView;
+    private ApplicationViewModel applicationViewModel;
     private Simulator simulator;
 
-    public Toolbar(MainView mainView) {
+    public Toolbar(MainView mainView, ApplicationViewModel applicationViewModel) {
         this.mainView = mainView;
+        this.applicationViewModel = applicationViewModel;
         Button draw = new Button("Draw");
         draw.setOnAction(this::handleDraw);
         Button erase = new Button("Erase");
@@ -43,7 +47,7 @@ public class Toolbar extends ToolBar {
         mainView.draw();
     }
     private void handleReset(ActionEvent event) {
-        mainView.setApplicationState(MainView.EDITING);
+        this.applicationViewModel.setCurrentState(ApplicationState.EDITING);
         simulator = null;
         mainView.draw();
     }
@@ -57,10 +61,7 @@ public class Toolbar extends ToolBar {
     }
 
     private void switchToSimulatingState() {
-        if (mainView.getApplicationState() == MainView.EDITING) {
-            mainView.setApplicationState(MainView.SIMULATING);
-            simulator = new Simulator(mainView, mainView.getSimulation());
-        }
+        this.applicationViewModel.setCurrentState(ApplicationState.SIMULATING);
+        this.simulator = new Simulator(mainView, mainView.getSimulation());
     }
-
 }

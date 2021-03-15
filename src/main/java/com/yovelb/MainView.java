@@ -4,6 +4,8 @@ import com.yovelb.model.Board;
 import com.yovelb.model.BoundedBoard;
 import com.yovelb.model.CellState;
 import com.yovelb.model.StandardRule;
+import com.yovelb.viewmodel.ApplicationState;
+import com.yovelb.viewmodel.ApplicationViewModel;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -20,8 +22,6 @@ import javafx.scene.transform.NonInvertibleTransformException;
 import static com.yovelb.model.CellState.*;
 
 public class MainView extends VBox {
-    public static final int EDITING = 0;
-    public static final int SIMULATING = 1;
 
     private final Canvas canvas;
     private final InfoBar infoBar;
@@ -32,9 +32,15 @@ public class MainView extends VBox {
     private Board initialBoard;
 
     private CellState drawMode = ALIVE;
-    private int applicationState = EDITING;
 
-    public MainView() {
+    private ApplicationViewModel appViewModel;
+
+    private boolean isDrawingEnabled = true;
+    private boolean drawInitialBoard = true;
+
+    public MainView(ApplicationViewModel appViewModel) {
+        this.appViewModel = appViewModel;
+        this.appViewModel.listenToAppState(this::onApplicationStateChanged);
         this.canvas = new Canvas(400, 400);
         this.canvas.setOnMouseClicked(this::handleDraw);
         this.canvas.setOnMouseDragged(this::handleDraw);
@@ -42,7 +48,7 @@ public class MainView extends VBox {
 
         this.setOnKeyPressed(this::onKeyPressed);
 
-        Toolbar toolbar = new Toolbar(this);
+        Toolbar toolbar = new Toolbar(this, appViewModel);
 
         this.infoBar = new InfoBar();
         infoBar.setDrawMode(drawMode);
@@ -61,6 +67,19 @@ public class MainView extends VBox {
         this.initialBoard = new BoundedBoard(10, 10);
     }
 
+    private void onApplicationStateChanged(ApplicationState state) {
+        if (state == ApplicationState.EDITING) {
+            this.isDrawingEnabled = true;
+            this.drawInitialBoard = true;
+        } else if (state == ApplicationState.SIMULATING) {
+            this.isDrawingEnabled = false;
+            this.drawInitialBoard = false;
+            this.simulation = new Simulation(this.initialBoard, new StandardRule());
+        } else {
+            throw new IllegalArgumentException("Unsupported ApplicationState: " + state.name());
+        }
+    }
+
     private void onKeyPressed(KeyEvent keyEvent) {
         if (keyEvent.getCode() == KeyCode.D) {
             setDrawMode(ALIVE);
@@ -75,7 +94,7 @@ public class MainView extends VBox {
     }
 
     private void handleDraw(MouseEvent event) {
-        if (applicationState == SIMULATING) {
+        if (!isDrawingEnabled) {
             return;
         }
         Point2D coordinates = getSimulationCoordinates(event);
@@ -100,7 +119,7 @@ public class MainView extends VBox {
         g.setFill(Color.LIGHTGRAY);
         g.fillRect(0, 0, 400, 400);
 
-        if (applicationState == EDITING) {
+        if (drawInitialBoard) {
             drawSimulation(initialBoard);
         } else {
             drawSimulation(simulation.getBoard());
@@ -136,18 +155,5 @@ public class MainView extends VBox {
     public void setDrawMode(CellState mode) {
         this.drawMode = mode;
         this.infoBar.setDrawMode(drawMode);
-    }
-
-    public void setApplicationState(int applicationState) {
-        if (this.applicationState == applicationState) {
-            return;
-        }
-        if (applicationState == SIMULATING) {
-            simulation = new Simulation(initialBoard, new StandardRule());
-        }
-        this.applicationState = applicationState;
-    }
-    public int getApplicationState() {
-        return applicationState;
     }
 }
