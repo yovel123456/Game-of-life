@@ -1,19 +1,20 @@
 package com.yovelb;
 
 import com.yovelb.model.CellState;
+import com.yovelb.viewmodel.EditorViewModel;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 
 public class InfoBar extends HBox {
-    private static String drawModeFormat = "Draw Mode: %s";
-    private static String cursorPositionFormat = "Cursor: (%d, %d)";
 
-    private Label cursor;
-    private Label editingTool;
+    private final Label cursor;
+    private final Label editingTool;
 
-    public InfoBar() {
+    public InfoBar(EditorViewModel editorViewModel) {
+        editorViewModel.listenToDrawMode(this::setDrawMode);
+
         this.cursor = new Label("Cursor: (0, 0)");
         this.editingTool = new Label("Draw Mode: Drawing");
 
@@ -24,11 +25,13 @@ public class InfoBar extends HBox {
 
         getChildren().addAll(cursor, editingTool);
     }
-    public void setDrawMode(CellState drawMode) {
+    private void setDrawMode(CellState drawMode) {
+        String drawModeFormat = "Draw Mode: %s";
         editingTool.setText(String.format(drawModeFormat, (drawMode == CellState.ALIVE) ? "Drawing" : "Erasing"));
     }
 
     public void setCursorPosition(int x, int y) {
+        String cursorPositionFormat = "Cursor: (%d, %d)";
         cursor.setText(String.format(cursorPositionFormat, x, y));
     }
 }

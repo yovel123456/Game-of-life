@@ -2,10 +2,10 @@ package com.yovelb;
 
 import com.yovelb.model.Board;
 import com.yovelb.model.CellState;
-import com.yovelb.model.StandardRule;
 import com.yovelb.viewmodel.ApplicationState;
 import com.yovelb.viewmodel.ApplicationViewModel;
 import com.yovelb.viewmodel.BoardViewModel;
+import com.yovelb.viewmodel.EditorViewModel;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -19,8 +19,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 
-import static com.yovelb.model.CellState.*;
-
 public class MainView extends VBox {
 
     private final Canvas canvas;
@@ -28,22 +26,12 @@ public class MainView extends VBox {
 
     private final Affine affine;
 
-    private Board board;
+    private final EditorViewModel editorViewModel;
 
-    private CellState drawMode = ALIVE;
+    public MainView(ApplicationViewModel appViewModel, BoardViewModel boardViewModel, EditorViewModel editorViewModel) {
+        this.editorViewModel = editorViewModel;
 
-    private ApplicationViewModel appViewModel;
-    private BoardViewModel boardViewModel;
-
-    private boolean isDrawingEnabled = true;
-
-    public MainView(ApplicationViewModel appViewModel, BoardViewModel boardViewModel, Board initialBoard) {
-        this.appViewModel = appViewModel;
-        this.boardViewModel = boardViewModel;
-        this.board = initialBoard;
-
-        this.appViewModel.listenToAppState(this::onApplicationStateChanged);
-        this.boardViewModel.listenToBoard(this::onBoardChanged);
+        boardViewModel.listenToBoard(this::onBoardChanged);
 
         this.canvas = new Canvas(400, 400);
         this.canvas.setOnMouseClicked(this::handleDraw);
@@ -52,10 +40,9 @@ public class MainView extends VBox {
 
         this.setOnKeyPressed(this::onKeyPressed);
 
-        Toolbar toolbar = new Toolbar(this, appViewModel, boardViewModel);
+        Toolbar toolbar = new Toolbar(appViewModel, boardViewModel, editorViewModel);
 
-        this.infoBar = new InfoBar();
-        infoBar.setDrawMode(drawMode);
+        this.infoBar = new InfoBar(editorViewModel);
         infoBar.setCursorPosition(0, 0);
 
         Pane spacer = new Pane();
@@ -73,22 +60,11 @@ public class MainView extends VBox {
         draw(board);
     }
 
-    private void onApplicationStateChanged(ApplicationState state) {
-        if (state == ApplicationState.EDITING) {
-            this.isDrawingEnabled = true;
-            this.boardViewModel.setBoard(this.board);
-        } else if (state == ApplicationState.SIMULATING) {
-            this.isDrawingEnabled = false;
-        } else {
-            throw new IllegalArgumentException("Unsupported ApplicationState: " + state.name());
-        }
-    }
-
     private void onKeyPressed(KeyEvent keyEvent) {
         if (keyEvent.getCode() == KeyCode.D) {
-            setDrawMode(ALIVE);
+            this.editorViewModel.setDrawMode(CellState.ALIVE);
         } else if (keyEvent.getCode() == KeyCode.E) {
-            setDrawMode(DEAD);
+            this.editorViewModel.setDrawMode(CellState.DEAD);
         }
     }
 
@@ -98,12 +74,8 @@ public class MainView extends VBox {
     }
 
     private void handleDraw(MouseEvent event) {
-        if (!isDrawingEnabled) {
-            return;
-        }
         Point2D coordinates = getSimulationCoordinates(event);
-        board.setState((int) coordinates.getX(), (int) coordinates.getY(), drawMode);
-        this.boardViewModel.setBoard(this.board);
+        this.editorViewModel.boardPress((int) coordinates.getX(), (int) coordinates.getY());
     }
 
     private Point2D getSimulationCoordinates(MouseEvent event) {
@@ -140,15 +112,10 @@ public class MainView extends VBox {
         g.setFill(Color.BLACK);
         for (int x = 0; x < simulationToDraw.getWidth(); x++) {
             for (int y = 0; y < simulationToDraw.getHeight(); y++) {
-                if (simulationToDraw.getState(x, y) == ALIVE) {
+                if (simulationToDraw.getState(x, y) == CellState.ALIVE) {
                     g.fillRect(x, y, 1, 1);
                 }
             }
         }
-    }
-
-    public void setDrawMode(CellState mode) {
-        this.drawMode = mode;
-        this.infoBar.setDrawMode(drawMode);
     }
 }
