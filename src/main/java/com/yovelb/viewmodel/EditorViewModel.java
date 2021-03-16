@@ -8,9 +8,9 @@ import java.util.List;
 
 public class EditorViewModel {
     private CellState drawMode = CellState.ALIVE;
-    private BoardViewModel boardViewModel;
-    private Board editorBoard;
-    private List<SimpleChangeListener<CellState>> drawModeListeners;
+    private final BoardViewModel boardViewModel;
+    private final Board editorBoard;
+    private final List<SimpleChangeListener<CellState>> drawModeListeners;
     private boolean drawingEnabled = true;
 
     public EditorViewModel(BoardViewModel boardViewModel, Board initialBoard) {

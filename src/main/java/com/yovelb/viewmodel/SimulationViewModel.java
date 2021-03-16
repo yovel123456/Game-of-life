@@ -7,8 +7,8 @@ import javafx.animation.Timeline;
 import javafx.util.Duration;
 
 public class SimulationViewModel {
-    private Timeline timeline;
-    private BoardViewModel boardViewModel;
+    private final Timeline timeline;
+    private final BoardViewModel boardViewModel;
     private Simulation simulation;
 
     public SimulationViewModel(BoardViewModel boardViewModel) {

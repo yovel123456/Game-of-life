@@ -7,7 +7,7 @@ import java.util.List;
 
 public class BoardViewModel {
     private Board board;
-    private List<SimpleChangeListener<Board>> boardListeners;
+    private final List<SimpleChangeListener<Board>> boardListeners;
 
     public BoardViewModel() {
         this.boardListeners = new LinkedList<>();

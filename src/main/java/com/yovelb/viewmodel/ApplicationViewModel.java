@@ -5,7 +5,7 @@ import java.util.List;
 
 public class ApplicationViewModel {
     private ApplicationState currentState;
-    private List<SimpleChangeListener<ApplicationState>> appStateListeners;
+    private final List<SimpleChangeListener<ApplicationState>> appStateListeners;
 
     public ApplicationViewModel(ApplicationState currentState) {
         this.currentState = currentState;

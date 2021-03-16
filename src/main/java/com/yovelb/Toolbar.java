@@ -10,9 +10,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
 
 public class Toolbar extends ToolBar {
-    private ApplicationViewModel applicationViewModel;
-    private SimulationViewModel simulationViewModel;
-    private EditorViewModel editorViewModel;
+    private final ApplicationViewModel applicationViewModel;
+    private final SimulationViewModel simulationViewModel;
+    private final EditorViewModel editorViewModel;
 
     public Toolbar(ApplicationViewModel applicationViewModel, EditorViewModel editorViewModel, SimulationViewModel simulationViewModel) {
         this.applicationViewModel = applicationViewModel;
