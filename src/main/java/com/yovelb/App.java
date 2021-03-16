@@ -2,10 +2,7 @@ package com.yovelb;
 
 import com.yovelb.model.Board;
 import com.yovelb.model.BoundedBoard;
-import com.yovelb.viewmodel.ApplicationState;
-import com.yovelb.viewmodel.ApplicationViewModel;
-import com.yovelb.viewmodel.BoardViewModel;
-import com.yovelb.viewmodel.EditorViewModel;
+import com.yovelb.viewmodel.*;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -17,9 +14,12 @@ public class App extends Application {
         BoardViewModel boardViewModel = new BoardViewModel();
         Board initialBoard = new BoundedBoard(10, 10);
         EditorViewModel editorViewModel = new EditorViewModel(boardViewModel, initialBoard);
-        appViewModel.listenToAppState(editorViewModel::onAppStateChanged);
+        SimulationViewModel simulationViewModel = new SimulationViewModel(boardViewModel);
 
-        MainView mainView = new MainView(appViewModel, boardViewModel, editorViewModel);
+        appViewModel.listenToAppState(editorViewModel::onAppStateChanged);
+        appViewModel.listenToAppState(simulationViewModel::onAppStateChanged);
+
+        MainView mainView = new MainView(appViewModel, boardViewModel, editorViewModel, simulationViewModel);
         Scene scene = new Scene(mainView, 640, 480);
         stage.setScene(scene);
         stage.show();

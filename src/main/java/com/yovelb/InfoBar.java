@@ -8,7 +8,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 
 public class InfoBar extends HBox {
-
     private final Label cursor;
     private final Label editingTool;
 

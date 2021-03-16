@@ -2,10 +2,10 @@ package com.yovelb;
 
 import com.yovelb.model.Board;
 import com.yovelb.model.CellState;
-import com.yovelb.viewmodel.ApplicationState;
 import com.yovelb.viewmodel.ApplicationViewModel;
 import com.yovelb.viewmodel.BoardViewModel;
 import com.yovelb.viewmodel.EditorViewModel;
+import com.yovelb.viewmodel.SimulationViewModel;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -27,9 +27,12 @@ public class MainView extends VBox {
     private final Affine affine;
 
     private final EditorViewModel editorViewModel;
+    private SimulationViewModel simulationViewModel;
 
-    public MainView(ApplicationViewModel appViewModel, BoardViewModel boardViewModel, EditorViewModel editorViewModel) {
+    public MainView(ApplicationViewModel appViewModel, BoardViewModel boardViewModel,
+                    EditorViewModel editorViewModel, SimulationViewModel simulationViewModel) {
         this.editorViewModel = editorViewModel;
+        this.simulationViewModel = simulationViewModel;
 
         boardViewModel.listenToBoard(this::onBoardChanged);
 
@@ -40,7 +43,7 @@ public class MainView extends VBox {
 
         this.setOnKeyPressed(this::onKeyPressed);
 
-        Toolbar toolbar = new Toolbar(appViewModel, boardViewModel, editorViewModel);
+        Toolbar toolbar = new Toolbar(appViewModel, editorViewModel, simulationViewModel);
 
         this.infoBar = new InfoBar(editorViewModel);
         infoBar.setCursorPosition(0, 0);

@@ -1,24 +1,22 @@
 package com.yovelb;
 
 import com.yovelb.model.CellState;
-import com.yovelb.model.StandardRule;
 import com.yovelb.viewmodel.ApplicationState;
 import com.yovelb.viewmodel.ApplicationViewModel;
-import com.yovelb.viewmodel.BoardViewModel;
 import com.yovelb.viewmodel.EditorViewModel;
+import com.yovelb.viewmodel.SimulationViewModel;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
 
 public class Toolbar extends ToolBar {
     private ApplicationViewModel applicationViewModel;
-    private BoardViewModel boardViewModel;
-    private Simulator simulator;
+    private SimulationViewModel simulationViewModel;
     private EditorViewModel editorViewModel;
 
-    public Toolbar(ApplicationViewModel applicationViewModel, BoardViewModel boardViewModel, EditorViewModel editorViewModel) {
+    public Toolbar(ApplicationViewModel applicationViewModel, EditorViewModel editorViewModel, SimulationViewModel simulationViewModel) {
         this.applicationViewModel = applicationViewModel;
-        this.boardViewModel = boardViewModel;
+        this.simulationViewModel = simulationViewModel;
         this.editorViewModel = editorViewModel;
         Button draw = new Button("Draw");
         draw.setOnAction(this::handleDraw);
@@ -46,25 +44,22 @@ public class Toolbar extends ToolBar {
 
     private void handleStep(ActionEvent event) {
         switchToSimulatingState();
-        this.simulator.doStep();
+        this.simulationViewModel.doStep();
 
     }
     private void handleReset(ActionEvent event) {
         this.applicationViewModel.setCurrentState(ApplicationState.EDITING);
-        simulator = null;
     }
     private void handleStart(ActionEvent event) {
         switchToSimulatingState();
-        simulator.start();
+        simulationViewModel.start();
     }
 
     private void handleStop(ActionEvent event) {
-        simulator.stop();
+        simulationViewModel.stop();
     }
 
     private void switchToSimulatingState() {
         this.applicationViewModel.setCurrentState(ApplicationState.SIMULATING);
-        Simulation simulation = new Simulation(boardViewModel.getBoard(), new StandardRule());
-        this.simulator = new Simulator(this.boardViewModel, simulation);
     }
 }
