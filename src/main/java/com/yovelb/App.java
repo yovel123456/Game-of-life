@@ -2,6 +2,7 @@ package com.yovelb;
 
 import com.yovelb.model.Board;
 import com.yovelb.model.BoundedBoard;
+import com.yovelb.view.SimulationCanvas;
 import com.yovelb.viewmodel.*;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -19,10 +20,19 @@ public class App extends Application {
         appViewModel.listenToAppState(editorViewModel::onAppStateChanged);
         appViewModel.listenToAppState(simulationViewModel::onAppStateChanged);
 
-
         boardViewModel.setBoard(initialBoard);
-        MainView mainView = new MainView(appViewModel, boardViewModel, editorViewModel, simulationViewModel);
-        Scene scene = new Scene(mainView, 640, 480);
+
+        SimulationCanvas simulationCanvas = new SimulationCanvas(boardViewModel, editorViewModel);
+        Toolbar toolbar = new Toolbar(appViewModel, editorViewModel, simulationViewModel);
+        InfoBar infoBar = new InfoBar(editorViewModel);
+
+        MainView mainView = new MainView(editorViewModel);
+
+        mainView.setTop(toolbar);
+        mainView.setCenter(simulationCanvas);
+        mainView.setBottom(infoBar);
+
+        Scene scene = new Scene(mainView, 1000, 800);
         stage.setScene(scene);
         stage.show();
 
