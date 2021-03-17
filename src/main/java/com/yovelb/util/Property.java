@@ -8,7 +8,7 @@ import java.util.List;
 
 public class Property<T> {
     private T value;
-    private List<SimpleChangeListener<T>> listeners = new LinkedList<>();
+    private final List<SimpleChangeListener<T>> listeners = new LinkedList<>();
 
     public Property(T value) {
         this.value = value;

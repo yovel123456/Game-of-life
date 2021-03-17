@@ -1,34 +1,12 @@
 package com.yovelb.viewmodel;
 
 import com.yovelb.model.Board;
-
-import java.util.LinkedList;
-import java.util.List;
+import com.yovelb.util.Property;
 
 public class BoardViewModel {
-    private Board board;
-    private final List<SimpleChangeListener<Board>> boardListeners;
+    private final Property<Board> boardProperty = new Property<>();
 
-    public BoardViewModel() {
-        this.boardListeners = new LinkedList<>();
-    }
-
-    public void listenToBoard(SimpleChangeListener<Board> listener) {
-        this.boardListeners.add(listener);
-    }
-
-    public void setBoard(Board board) {
-        this.board = board;
-        notifyBoardListeners();
-    }
-
-    private void notifyBoardListeners() {
-        for (SimpleChangeListener<Board> boardListener : boardListeners) {
-            boardListener.valueChanged(this.board);
-        }
-    }
-
-    public Board getBoard() {
-        return this.board;
+    public Property<Board> getBoardProperty() {
+        return boardProperty;
     }
 }

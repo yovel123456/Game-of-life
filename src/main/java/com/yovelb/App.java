@@ -11,16 +11,16 @@ import javafx.stage.Stage;
 public class App extends Application {
     @Override
     public void start(Stage stage) {
-        ApplicationViewModel appViewModel = new ApplicationViewModel(ApplicationState.EDITING);
+        ApplicationViewModel appViewModel = new ApplicationViewModel();
         BoardViewModel boardViewModel = new BoardViewModel();
         Board initialBoard = new BoundedBoard(20, 12);
         EditorViewModel editorViewModel = new EditorViewModel(boardViewModel, initialBoard);
         SimulationViewModel simulationViewModel = new SimulationViewModel(boardViewModel);
 
-        appViewModel.listenToAppState(editorViewModel::onAppStateChanged);
-        appViewModel.listenToAppState(simulationViewModel::onAppStateChanged);
+        appViewModel.getAppStateProperty().listen(editorViewModel::onAppStateChanged);
+        appViewModel.getAppStateProperty().listen(simulationViewModel::onAppStateChanged);
 
-        boardViewModel.setBoard(initialBoard);
+        boardViewModel.getBoardProperty().set(initialBoard);
 
         SimulationCanvas simulationCanvas = new SimulationCanvas(boardViewModel, editorViewModel);
         Toolbar toolbar = new Toolbar(appViewModel, editorViewModel, simulationViewModel);

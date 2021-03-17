@@ -1,31 +1,11 @@
 package com.yovelb.viewmodel;
 
-import java.util.LinkedList;
-import java.util.List;
+import com.yovelb.util.Property;
 
 public class ApplicationViewModel {
-    private ApplicationState currentState;
-    private final List<SimpleChangeListener<ApplicationState>> appStateListeners;
+    private final Property<ApplicationState> appStateProperty = new Property<>(ApplicationState.EDITING);
 
-    public ApplicationViewModel(ApplicationState currentState) {
-        this.currentState = currentState;
-        this.appStateListeners = new LinkedList<>();
-    }
-
-    public void listenToAppState(SimpleChangeListener<ApplicationState> listener){
-        this.appStateListeners.add(listener);
-    }
-
-    public void setCurrentState(ApplicationState newState) {
-        if (this.currentState != newState) {
-            this.currentState = newState;
-            notifyAppStateListeners();
-        }
-    }
-
-    private void notifyAppStateListeners() {
-        for (SimpleChangeListener<ApplicationState> appStateListener : appStateListeners) {
-            appStateListener.valueChanged(this.currentState);
-        }    
+    public Property<ApplicationState> getAppStateProperty() {
+        return appStateProperty;
     }
 }

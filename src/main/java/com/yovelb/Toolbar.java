@@ -35,11 +35,11 @@ public class Toolbar extends ToolBar {
     }
 
     private void handleDraw(ActionEvent event) {
-        this.editorViewModel.setDrawMode(CellState.ALIVE);
+        this.editorViewModel.getDrawModeProperty().set(CellState.ALIVE);
     }
 
     private void handleErase(ActionEvent event) {
-        this.editorViewModel.setDrawMode(CellState.DEAD);
+        this.editorViewModel.getDrawModeProperty().set(CellState.DEAD);
     }
 
     private void handleStep(ActionEvent event) {
@@ -48,7 +48,7 @@ public class Toolbar extends ToolBar {
 
     }
     private void handleReset(ActionEvent event) {
-        this.applicationViewModel.setCurrentState(ApplicationState.EDITING);
+        this.applicationViewModel.getAppStateProperty().set(ApplicationState.EDITING);
     }
     private void handleStart(ActionEvent event) {
         switchToSimulatingState();
@@ -60,6 +60,6 @@ public class Toolbar extends ToolBar {
     }
 
     private void switchToSimulatingState() {
-        this.applicationViewModel.setCurrentState(ApplicationState.SIMULATING);
+        this.applicationViewModel.getAppStateProperty().set(ApplicationState.SIMULATING);
     }
 }
