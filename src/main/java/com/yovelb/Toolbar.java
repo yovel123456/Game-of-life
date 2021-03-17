@@ -1,23 +1,19 @@
 package com.yovelb;
 
 import com.yovelb.model.CellState;
-import com.yovelb.viewmodel.ApplicationState;
-import com.yovelb.viewmodel.ApplicationViewModel;
-import com.yovelb.viewmodel.EditorViewModel;
-import com.yovelb.viewmodel.SimulationViewModel;
+import com.yovelb.util.event.EventBus;
+import com.yovelb.viewmodel.*;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
 
 public class Toolbar extends ToolBar {
-    private final ApplicationViewModel applicationViewModel;
-    private final SimulationViewModel simulationViewModel;
     private final EditorViewModel editorViewModel;
+    private EventBus eventBus;
 
-    public Toolbar(ApplicationViewModel applicationViewModel, EditorViewModel editorViewModel, SimulationViewModel simulationViewModel) {
-        this.applicationViewModel = applicationViewModel;
-        this.simulationViewModel = simulationViewModel;
+    public Toolbar(EditorViewModel editorViewModel, EventBus eventBus) {
         this.editorViewModel = editorViewModel;
+        this.eventBus = eventBus;
         Button draw = new Button("Draw");
         draw.setOnAction(this::handleDraw);
         Button erase = new Button("Erase");
@@ -43,23 +39,17 @@ public class Toolbar extends ToolBar {
     }
 
     private void handleStep(ActionEvent event) {
-        switchToSimulatingState();
-        this.simulationViewModel.doStep();
+        this.eventBus.emit(new SimulatorEvent(SimulatorEvent.Type.STEP));
 
     }
     private void handleReset(ActionEvent event) {
-        this.applicationViewModel.getAppStateProperty().set(ApplicationState.EDITING);
+        this.eventBus.emit(new SimulatorEvent(SimulatorEvent.Type.RESET));
     }
     private void handleStart(ActionEvent event) {
-        switchToSimulatingState();
-        simulationViewModel.start();
+        this.eventBus.emit(new SimulatorEvent(SimulatorEvent.Type.START));
     }
 
     private void handleStop(ActionEvent event) {
-        simulationViewModel.stop();
-    }
-
-    private void switchToSimulatingState() {
-        this.applicationViewModel.getAppStateProperty().set(ApplicationState.SIMULATING);
+        this.eventBus.emit(new SimulatorEvent(SimulatorEvent.Type.STOP));
     }
 }

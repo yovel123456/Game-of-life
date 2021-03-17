@@ -2,6 +2,7 @@ package com.yovelb;
 
 import com.yovelb.model.Board;
 import com.yovelb.model.BoundedBoard;
+import com.yovelb.util.event.EventBus;
 import com.yovelb.view.SimulationCanvas;
 import com.yovelb.viewmodel.*;
 import javafx.application.Application;
@@ -11,19 +12,21 @@ import javafx.stage.Stage;
 public class App extends Application {
     @Override
     public void start(Stage stage) {
+        EventBus eventBus = new EventBus();
+
         ApplicationViewModel appViewModel = new ApplicationViewModel();
         BoardViewModel boardViewModel = new BoardViewModel();
         Board initialBoard = new BoundedBoard(20, 12);
         EditorViewModel editorViewModel = new EditorViewModel(boardViewModel, initialBoard);
-        SimulationViewModel simulationViewModel = new SimulationViewModel(boardViewModel);
+        SimulationViewModel simulationViewModel = new SimulationViewModel(boardViewModel, appViewModel, editorViewModel);
+        eventBus.listenFor(SimulatorEvent.class, simulationViewModel::handle);
 
         appViewModel.getAppStateProperty().listen(editorViewModel::onAppStateChanged);
-        appViewModel.getAppStateProperty().listen(simulationViewModel::onAppStateChanged);
 
         boardViewModel.getBoardProperty().set(initialBoard);
 
         SimulationCanvas simulationCanvas = new SimulationCanvas(boardViewModel, editorViewModel);
-        Toolbar toolbar = new Toolbar(appViewModel, editorViewModel, simulationViewModel);
+        Toolbar toolbar = new Toolbar(editorViewModel, eventBus);
         InfoBar infoBar = new InfoBar(editorViewModel);
 
         MainView mainView = new MainView(editorViewModel);
