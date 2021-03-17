@@ -35,7 +35,7 @@ class PropertyTest {
         assertEquals(expected, listener.value);
     }
 
-    private class DoubleListener implements SimpleChangeListener<Double> {
+    private static class DoubleListener implements SimpleChangeListener<Double> {
         private boolean notified = false;
         private double value;
 

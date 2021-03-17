@@ -1,6 +1,5 @@
 package com.yovelb.util;
 
-import com.yovelb.viewmodel.ApplicationState;
 import com.yovelb.viewmodel.SimpleChangeListener;
 
 import java.util.LinkedList;

@@ -4,7 +4,6 @@ import com.yovelb.model.Board;
 import com.yovelb.model.BoundedBoard;
 import com.yovelb.model.CellState;
 import com.yovelb.model.StandardRule;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
