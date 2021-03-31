@@ -9,8 +9,8 @@ import javafx.util.Duration;
 public class SimulationViewModel {
     private final Timeline timeline;
     private final BoardViewModel boardViewModel;
-    private ApplicationViewModel applicationViewModel;
-    private EditorViewModel editorViewModel;
+    private final ApplicationViewModel applicationViewModel;
+    private final EditorViewModel editorViewModel;
     private Simulation simulation;
 
     public SimulationViewModel(BoardViewModel boardViewModel, ApplicationViewModel applicationViewModel, EditorViewModel editorViewModel) {
@@ -41,7 +41,7 @@ public class SimulationViewModel {
         }
     }
 
-    public void doStep() {
+    private void doStep() {
         if (applicationViewModel.getAppStateProperty().get() != ApplicationState.SIMULATING) {
             applicationViewModel.getAppStateProperty().set(ApplicationState.SIMULATING);
         }
@@ -49,11 +49,11 @@ public class SimulationViewModel {
         this.boardViewModel.getBoardProperty().set(this.simulation.getBoard());
     }
 
-    public void start() {
+    private void start() {
         timeline.play();
     }
 
-    public void stop() {
+    private void stop() {
         timeline.stop();
     }
 

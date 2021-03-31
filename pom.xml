@@ -37,6 +37,13 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.5</version>
                 <configuration>
+                    <stripDebug>true</stripDebug>
+                    <compress>2</compress>
+                    <noHeaderFiles>true</noHeaderFiles>
+                    <noManPages>true</noManPages>
+                    <launcher>golsim</launcher>
+                    <jlinkImageName>golf</jlinkImageName>
+                    <jlinkZipName>golzip</jlinkZipName>
                     <mainClass>com.yovelb.App</mainClass>
                 </configuration>
             </plugin>

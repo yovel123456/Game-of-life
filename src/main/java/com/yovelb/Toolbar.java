@@ -8,11 +8,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
 
 public class Toolbar extends ToolBar {
-    private final EditorViewModel editorViewModel;
-    private EventBus eventBus;
+    private final EventBus eventBus;
 
-    public Toolbar(EditorViewModel editorViewModel, EventBus eventBus) {
-        this.editorViewModel = editorViewModel;
+    public Toolbar(EventBus eventBus) {
         this.eventBus = eventBus;
         Button draw = new Button("Draw");
         draw.setOnAction(this::handleDraw);
@@ -31,11 +29,11 @@ public class Toolbar extends ToolBar {
     }
 
     private void handleDraw(ActionEvent event) {
-        this.editorViewModel.getDrawModeProperty().set(CellState.ALIVE);
+        this.eventBus.emit(new DrawModeEvent(CellState.ALIVE));
     }
 
     private void handleErase(ActionEvent event) {
-        this.editorViewModel.getDrawModeProperty().set(CellState.DEAD);
+        this.eventBus.emit(new DrawModeEvent(CellState.DEAD));
     }
 
     private void handleStep(ActionEvent event) {
@@ -45,6 +43,7 @@ public class Toolbar extends ToolBar {
     private void handleReset(ActionEvent event) {
         this.eventBus.emit(new SimulatorEvent(SimulatorEvent.Type.RESET));
     }
+
     private void handleStart(ActionEvent event) {
         this.eventBus.emit(new SimulatorEvent(SimulatorEvent.Type.START));
     }

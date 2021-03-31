@@ -10,7 +10,7 @@ public class SimulatorEvent implements Event {
         RESET
     }
 
-    private Type eventType;
+    private final Type eventType;
 
     public SimulatorEvent(Type eventType) {
         this.eventType = eventType;

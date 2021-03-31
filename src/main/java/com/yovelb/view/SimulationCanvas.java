@@ -3,6 +3,8 @@ package com.yovelb.view;
 import com.yovelb.model.Board;
 import com.yovelb.model.CellPosition;
 import com.yovelb.model.CellState;
+import com.yovelb.util.event.EventBus;
+import com.yovelb.viewmodel.BoardEvent;
 import com.yovelb.viewmodel.BoardViewModel;
 import com.yovelb.viewmodel.EditorViewModel;
 import javafx.geometry.Point2D;
@@ -17,12 +19,14 @@ import javafx.scene.transform.NonInvertibleTransformException;
 public class SimulationCanvas extends Pane {
     private final Canvas canvas;
     private final Affine affine;
-    private final EditorViewModel editorViewModel;
     private final BoardViewModel boardViewModel;
+    private final EditorViewModel editorViewModel;
+    private final EventBus eventBus;
 
-    public SimulationCanvas(BoardViewModel boardViewModel, EditorViewModel editorViewModel) {
+    public SimulationCanvas(BoardViewModel boardViewModel, EditorViewModel editorViewModel, EventBus eventBus) {
         this.boardViewModel = boardViewModel;
         this.editorViewModel = editorViewModel;
+        this.eventBus = eventBus;
 
         boardViewModel.getBoardProperty().listen(this::draw);
         editorViewModel.getCursorPositionProperty().listen(cellPosition -> draw(boardViewModel.getBoardProperty().get()));
@@ -41,20 +45,20 @@ public class SimulationCanvas extends Pane {
         this.getChildren().add(this.canvas);
     }
 
-    private void handleCursorMoved(MouseEvent event) {
-        CellPosition cursorPosition = getSimulationCoordinates(event);
-        this.editorViewModel.getCursorPositionProperty().set(cursorPosition);
-    }
-
     @Override
     public void resize(double width, double height) {
         super.resize(width, height);
         draw(this.boardViewModel.getBoardProperty().get());
     }
 
+    private void handleCursorMoved(MouseEvent event) {
+        CellPosition cursorPosition = getSimulationCoordinates(event);
+        this.eventBus.emit(new BoardEvent(BoardEvent.Type.CURSOR_MOVED, cursorPosition));
+    }
+
     private void handleDraw(MouseEvent event) {
         CellPosition cursorPosition = getSimulationCoordinates(event);
-        this.editorViewModel.boardPress(cursorPosition);
+        this.eventBus.emit(new BoardEvent(BoardEvent.Type.CURSOR_PRESSED, cursorPosition));
     }
 
     private CellPosition getSimulationCoordinates(MouseEvent event) {

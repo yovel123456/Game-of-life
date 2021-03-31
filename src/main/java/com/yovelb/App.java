@@ -17,7 +17,11 @@ public class App extends Application {
         ApplicationViewModel appViewModel = new ApplicationViewModel();
         BoardViewModel boardViewModel = new BoardViewModel();
         Board initialBoard = new BoundedBoard(20, 12);
+
         EditorViewModel editorViewModel = new EditorViewModel(boardViewModel, initialBoard);
+        eventBus.listenFor(DrawModeEvent.class, editorViewModel::handle);
+        eventBus.listenFor(BoardEvent.class, editorViewModel::handle);
+
         SimulationViewModel simulationViewModel = new SimulationViewModel(boardViewModel, appViewModel, editorViewModel);
         eventBus.listenFor(SimulatorEvent.class, simulationViewModel::handle);
 
@@ -25,8 +29,8 @@ public class App extends Application {
 
         boardViewModel.getBoardProperty().set(initialBoard);
 
-        SimulationCanvas simulationCanvas = new SimulationCanvas(boardViewModel, editorViewModel);
-        Toolbar toolbar = new Toolbar(editorViewModel, eventBus);
+        SimulationCanvas simulationCanvas = new SimulationCanvas(boardViewModel, editorViewModel, eventBus);
+        Toolbar toolbar = new Toolbar(eventBus);
         InfoBar infoBar = new InfoBar(editorViewModel);
 
         MainView mainView = new MainView(editorViewModel);
