@@ -3,6 +3,7 @@ package com.yovelb;
 import com.yovelb.logic.*;
 import com.yovelb.model.Board;
 import com.yovelb.model.BoundedBoard;
+import com.yovelb.state.EditorState;
 import com.yovelb.util.event.EventBus;
 import com.yovelb.view.InfoBar;
 import com.yovelb.view.MainView;
@@ -22,20 +23,26 @@ public class App extends Application {
         BoardViewModel boardViewModel = new BoardViewModel();
         Board initialBoard = new BoundedBoard(20, 12);
 
-        Editor editor = new Editor(initialBoard);
+        EditorState editorState = new EditorState(initialBoard);
+        Editor editor = new Editor(editorState);
         eventBus.listenFor(DrawModeEvent.class, editor::handle);
         eventBus.listenFor(BoardEvent.class, editor::handle);
-        editor.getCursorPositionProperty().listen(cursorPosition -> boardViewModel.getCursorPositionProperty().set(cursorPosition));
+        editorState.getCursorPositionProperty().listen(cursorPosition -> boardViewModel.getCursorPositionProperty().set(cursorPosition));
 
         Simulator simulator = new Simulator(appStateManager);
         eventBus.listenFor(SimulatorEvent.class, simulator::handle);
-        editor.getBoard().listen(editorBoard -> {
+        editorState.getBoardProperty().listen(editorBoard -> {
             simulator.getInitialBoard().set(editorBoard);
             boardViewModel.getBoardProperty().set(editorBoard);
         });
         simulator.getCurrentBoard().listen(simulationBoard -> boardViewModel.getBoardProperty().set(simulationBoard));
 
         appStateManager.getAppStateProperty().listen(editor::onAppStateChanged);
+        appStateManager.getAppStateProperty().listen(newState -> {
+            if (newState == ApplicationState.EDITING) {
+                boardViewModel.getBoardProperty().set(editorState.getBoardProperty().get());
+            }
+        });
 
         boardViewModel.getBoardProperty().set(initialBoard);
 
@@ -43,8 +50,8 @@ public class App extends Application {
         Toolbar toolbar = new Toolbar(eventBus);
 
         InfoBarViewModel infoBarViewModel = new InfoBarViewModel();
-        editor.getDrawModeProperty().listen(drawMode -> infoBarViewModel.getCurrentDrawModeProperty().set(drawMode));
-        editor.getCursorPositionProperty().listen(cursorPosition -> infoBarViewModel.getCursorPositionProperty().set(cursorPosition));
+        editorState.getDrawModeProperty().listen(drawMode -> infoBarViewModel.getCurrentDrawModeProperty().set(drawMode));
+        editorState.getCursorPositionProperty().listen(cursorPosition -> infoBarViewModel.getCursorPositionProperty().set(cursorPosition));
 
         InfoBar infoBar = new InfoBar(infoBarViewModel);
 
