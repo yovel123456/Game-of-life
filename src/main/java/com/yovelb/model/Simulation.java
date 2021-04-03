@@ -1,4 +1,4 @@
-package com.yovelb;
+package com.yovelb.model;
 
 import com.yovelb.model.Board;
 import com.yovelb.model.SimulationRule;

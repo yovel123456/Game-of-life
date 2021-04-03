@@ -1,8 +1,9 @@
-package com.yovelb;
+package com.yovelb.view;
 
+import com.yovelb.logic.DrawModeEvent;
+import com.yovelb.logic.SimulatorEvent;
 import com.yovelb.model.CellState;
 import com.yovelb.util.event.EventBus;
-import com.yovelb.viewmodel.*;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;

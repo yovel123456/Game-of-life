@@ -1,24 +1,25 @@
-package com.yovelb;
+package com.yovelb.view;
 
+import com.yovelb.logic.DrawModeEvent;
 import com.yovelb.model.CellState;
-import com.yovelb.viewmodel.EditorViewModel;
+import com.yovelb.util.event.EventBus;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 
 public class MainView extends BorderPane {
-    private final EditorViewModel editorViewModel;
+    private final EventBus eventBus;
 
-    public MainView(EditorViewModel editorViewModel) {
-        this.editorViewModel = editorViewModel;
+    public MainView(EventBus eventBus) {
+        this.eventBus = eventBus;
         this.setOnKeyPressed(this::onKeyPressed);
     }
 
     private void onKeyPressed(KeyEvent keyEvent) {
         if (keyEvent.getCode() == KeyCode.D) {
-            this.editorViewModel.getDrawModeProperty().set(CellState.ALIVE);
+            this.eventBus.emit(new DrawModeEvent(CellState.ALIVE));
         } else if (keyEvent.getCode() == KeyCode.E) {
-            this.editorViewModel.getDrawModeProperty().set(CellState.DEAD);
+            this.eventBus.emit(new DrawModeEvent(CellState.DEAD));
         }
     }
 }

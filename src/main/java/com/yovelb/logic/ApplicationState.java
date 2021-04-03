@@ -1,4 +1,4 @@
-package com.yovelb.viewmodel;
+package com.yovelb.logic;
 
 public enum ApplicationState {
     SIMULATING,

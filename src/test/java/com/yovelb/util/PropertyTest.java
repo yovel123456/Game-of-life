@@ -1,6 +1,5 @@
 package com.yovelb.util;
 
-import com.yovelb.viewmodel.SimpleChangeListener;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

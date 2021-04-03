@@ -1,21 +1,19 @@
-package com.yovelb.viewmodel;
+package com.yovelb.logic;
 
 import com.yovelb.model.Board;
 import com.yovelb.model.CellPosition;
 import com.yovelb.model.CellState;
 import com.yovelb.util.Property;
 
-public class EditorViewModel {
+public class Editor {
     private final Property<CellState> drawModeProperty = new Property<>(CellState.ALIVE);
     private final Property<CellPosition> cursorPositionProperty = new Property<>();
+    private final Property<Board> editorBoard = new Property<>();
 
-    private final BoardViewModel boardViewModel;
-    private final Board editorBoard;
     private boolean drawingEnabled = true;
 
-    public EditorViewModel(BoardViewModel boardViewModel, Board initialBoard) {
-        this.boardViewModel = boardViewModel;
-        this.editorBoard = initialBoard;
+    public Editor(Board initialBoard) {
+        this.editorBoard.set(initialBoard);
     }
 
     public void handle(DrawModeEvent drawModeEvent) {
@@ -25,7 +23,7 @@ public class EditorViewModel {
     public void handle(BoardEvent boardEvent) {
         switch (boardEvent.getEventType()) {
             case CURSOR_MOVED:
-                cursorPositionProperty.set(boardEvent.getCursorPosition());
+                this.cursorPositionProperty.set(boardEvent.getCursorPosition());
                 break;
             case CURSOR_PRESSED:
                 boardPress(boardEvent.getCursorPosition());
@@ -36,7 +34,7 @@ public class EditorViewModel {
     public void onAppStateChanged(ApplicationState state) {
         if (state == ApplicationState.EDITING) {
             drawingEnabled = true;
-            this.boardViewModel.getBoardProperty().set(editorBoard);
+            this.editorBoard.set(this.editorBoard.get());
         } else {
             drawingEnabled = false;
         }
@@ -44,9 +42,10 @@ public class EditorViewModel {
 
     private void boardPress(CellPosition cursorPosition) {
         this.cursorPositionProperty.set(cursorPosition);
-        if (drawingEnabled) {
-            this.editorBoard.setState(cursorPosition.getX(), cursorPosition.getY(), this.drawModeProperty.get());
-            this.boardViewModel.getBoardProperty().set(this.editorBoard);
+        if (this.drawingEnabled) {
+            Board board = this.editorBoard.get();
+            board.setState(cursorPosition.getX(), cursorPosition.getY(), this.drawModeProperty.get());
+            this.editorBoard.set(board);
         }
     }
 
@@ -58,7 +57,7 @@ public class EditorViewModel {
         return cursorPositionProperty;
     }
 
-    public Board getBoard() {
+    public Property<Board> getBoard() {
         return editorBoard;
     }
 }

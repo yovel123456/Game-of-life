@@ -3,10 +3,10 @@ package com.yovelb.view;
 import com.yovelb.model.Board;
 import com.yovelb.model.CellPosition;
 import com.yovelb.model.CellState;
+import com.yovelb.util.Property;
 import com.yovelb.util.event.EventBus;
-import com.yovelb.viewmodel.BoardEvent;
+import com.yovelb.logic.BoardEvent;
 import com.yovelb.viewmodel.BoardViewModel;
-import com.yovelb.viewmodel.EditorViewModel;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -20,16 +20,14 @@ public class SimulationCanvas extends Pane {
     private final Canvas canvas;
     private final Affine affine;
     private final BoardViewModel boardViewModel;
-    private final EditorViewModel editorViewModel;
     private final EventBus eventBus;
 
-    public SimulationCanvas(BoardViewModel boardViewModel, EditorViewModel editorViewModel, EventBus eventBus) {
+    public SimulationCanvas(BoardViewModel boardViewModel, EventBus eventBus) {
         this.boardViewModel = boardViewModel;
-        this.editorViewModel = editorViewModel;
         this.eventBus = eventBus;
 
-        boardViewModel.getBoardProperty().listen(this::draw);
-        editorViewModel.getCursorPositionProperty().listen(cellPosition -> draw(boardViewModel.getBoardProperty().get()));
+        this.boardViewModel.getBoardProperty().listen(this::draw);
+        this.boardViewModel.getCursorPositionProperty().listen(cellPosition -> draw(boardViewModel.getBoardProperty().get()));
 
         this.affine = new Affine();
         this.affine.appendScale(400 / 10f, 400 / 10f);
@@ -80,8 +78,9 @@ public class SimulationCanvas extends Pane {
 
         this.drawSimulation(newBoard);
 
-        if (editorViewModel.getCursorPositionProperty().isPresent()) {
-            CellPosition cursor = editorViewModel.getCursorPositionProperty().get();
+        Property<CellPosition> cursorPositionProperty = this.boardViewModel.getCursorPositionProperty();
+        if (cursorPositionProperty.isPresent()) {
+            CellPosition cursor = cursorPositionProperty.get();
             g.setFill(new Color(0.3, 0.3, 0.3, 0.5));
             g.fillRect(cursor.getX(), cursor.getY(), 1, 1);
         }
