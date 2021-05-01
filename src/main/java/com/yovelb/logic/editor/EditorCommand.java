@@ -1,4 +1,4 @@
-package com.yovelb.logic;
+package com.yovelb.logic.editor;
 
 import com.yovelb.command.Command;
 import com.yovelb.state.EditorState;

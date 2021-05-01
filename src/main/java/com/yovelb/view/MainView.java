@@ -1,6 +1,6 @@
 package com.yovelb.view;
 
-import com.yovelb.logic.DrawModeEvent;
+import com.yovelb.logic.editor.DrawModeEvent;
 import com.yovelb.model.CellState;
 import com.yovelb.util.event.EventBus;
 import javafx.scene.input.KeyCode;

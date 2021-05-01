@@ -1,10 +1,11 @@
-package com.yovelb.logic;
+package com.yovelb.logic.simulator;
 
-import com.yovelb.model.Board;
+import com.yovelb.logic.ApplicationState;
+import com.yovelb.logic.ApplicationStateManager;
+import com.yovelb.logic.SimulatorCommand;
 import com.yovelb.model.Simulation;
 import com.yovelb.model.StandardRule;
-import com.yovelb.util.Property;
-import com.yovelb.viewmodel.BoardViewModel;
+import com.yovelb.state.SimulatorState;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
@@ -14,11 +15,12 @@ public class Simulator {
     private final ApplicationStateManager applicationStateManager;
     private Simulation simulation;
 
-    private final Property<Board> initialBoard = new Property<>();
-    private final Property<Board> currentBoard = new Property<>();
+    private final SimulatorState state;
+    private boolean reset = true;
 
-    public Simulator(ApplicationStateManager applicationStateManager) {
+    public Simulator(ApplicationStateManager applicationStateManager, SimulatorState state) {
         this.applicationStateManager = applicationStateManager;
+        this.state = state;
 
         this.timeline = new Timeline(new KeyFrame(Duration.millis(500), e -> this.doStep()));
         this.timeline.setCycleCount(Timeline.INDEFINITE);
@@ -42,12 +44,16 @@ public class Simulator {
     }
 
     private void doStep() {
-        if (applicationStateManager.getAppStateProperty().get() != ApplicationState.SIMULATING) {
-            this.simulation = new Simulation(initialBoard.get(), new StandardRule());
+        if (reset) {
+            reset = false;
+            this.simulation = new Simulation(state.getBoardProperty().get(), new StandardRule());
             applicationStateManager.getAppStateProperty().set(ApplicationState.SIMULATING);
         }
         this.simulation.step();
-        this.currentBoard.set(simulation.getBoard());
+        SimulatorCommand command = (state) -> {
+            state.getBoardProperty().set(simulation.getBoard());
+        };
+        command.execute(this.state);
     }
 
     private void start() {
@@ -59,15 +65,7 @@ public class Simulator {
     }
 
     private void reset() {
-        //this.simulation = new Simulation(initialBoard.get(), new StandardRule());
+        reset = true;
         this.applicationStateManager.getAppStateProperty().set(ApplicationState.EDITING);
-    }
-
-    public Property<Board> getInitialBoard() {
-        return initialBoard;
-    }
-
-    public Property<Board> getCurrentBoard() {
-        return currentBoard;
     }
 }

@@ -1,4 +1,4 @@
-package com.yovelb.logic;
+package com.yovelb.logic.simulator;
 
 import com.yovelb.util.event.Event;
 

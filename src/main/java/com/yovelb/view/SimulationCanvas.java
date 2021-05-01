@@ -5,7 +5,7 @@ import com.yovelb.model.CellPosition;
 import com.yovelb.model.CellState;
 import com.yovelb.util.Property;
 import com.yovelb.util.event.EventBus;
-import com.yovelb.logic.BoardEvent;
+import com.yovelb.logic.editor.BoardEvent;
 import com.yovelb.viewmodel.BoardViewModel;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;

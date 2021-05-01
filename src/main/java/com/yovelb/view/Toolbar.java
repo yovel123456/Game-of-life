@@ -1,7 +1,7 @@
 package com.yovelb.view;
 
-import com.yovelb.logic.DrawModeEvent;
-import com.yovelb.logic.SimulatorEvent;
+import com.yovelb.logic.editor.DrawModeEvent;
+import com.yovelb.logic.simulator.SimulatorEvent;
 import com.yovelb.model.CellState;
 import com.yovelb.util.event.EventBus;
 import javafx.event.ActionEvent;

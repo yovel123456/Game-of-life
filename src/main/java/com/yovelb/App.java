@@ -1,9 +1,15 @@
 package com.yovelb;
 
 import com.yovelb.logic.*;
+import com.yovelb.logic.editor.BoardEvent;
+import com.yovelb.logic.editor.DrawModeEvent;
+import com.yovelb.logic.editor.Editor;
+import com.yovelb.logic.simulator.Simulator;
+import com.yovelb.logic.simulator.SimulatorEvent;
 import com.yovelb.model.Board;
 import com.yovelb.model.BoundedBoard;
 import com.yovelb.state.EditorState;
+import com.yovelb.state.SimulatorState;
 import com.yovelb.util.event.EventBus;
 import com.yovelb.view.InfoBar;
 import com.yovelb.view.MainView;
@@ -29,18 +35,21 @@ public class App extends Application {
         eventBus.listenFor(BoardEvent.class, editor::handle);
         editorState.getCursorPositionProperty().listen(cursorPosition -> boardViewModel.getCursorPositionProperty().set(cursorPosition));
 
-        Simulator simulator = new Simulator(appStateManager);
+        SimulatorState simulatorState = new SimulatorState(initialBoard);
+        Simulator simulator = new Simulator(appStateManager, simulatorState);
         eventBus.listenFor(SimulatorEvent.class, simulator::handle);
         editorState.getBoardProperty().listen(editorBoard -> {
-            simulator.getInitialBoard().set(editorBoard);
+            simulatorState.getBoardProperty().set(editorBoard);
             boardViewModel.getBoardProperty().set(editorBoard);
         });
-        simulator.getCurrentBoard().listen(simulationBoard -> boardViewModel.getBoardProperty().set(simulationBoard));
+        simulatorState.getBoardProperty().listen(simulationBoard -> boardViewModel.getBoardProperty().set(simulationBoard));
 
         appStateManager.getAppStateProperty().listen(editor::onAppStateChanged);
         appStateManager.getAppStateProperty().listen(newState -> {
             if (newState == ApplicationState.EDITING) {
-                boardViewModel.getBoardProperty().set(editorState.getBoardProperty().get());
+                Board currentBoard = editorState.getBoardProperty().get();
+                boardViewModel.getBoardProperty().set(currentBoard);
+                simulatorState.getBoardProperty().set(currentBoard);
             }
         });
 

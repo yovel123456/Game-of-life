@@ -1,6 +1,6 @@
-package com.yovelb.logic;
+package com.yovelb.logic.editor;
 
-import com.yovelb.model.Board;
+import com.yovelb.logic.ApplicationState;
 import com.yovelb.model.CellPosition;
 import com.yovelb.state.EditorState;
 
