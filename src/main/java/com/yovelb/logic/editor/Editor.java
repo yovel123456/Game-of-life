@@ -1,5 +1,6 @@
 package com.yovelb.logic.editor;
 
+import com.yovelb.command.CommandExecutor;
 import com.yovelb.logic.ApplicationState;
 import com.yovelb.model.CellPosition;
 import com.yovelb.state.EditorState;
@@ -8,14 +9,16 @@ public class Editor {
     private final EditorState editorState;
 
     private boolean drawingEnabled = true;
+    private final CommandExecutor commandExecutor;
 
-    public Editor(EditorState editorState) {
+    public Editor(EditorState editorState, CommandExecutor commandExecutor) {
         this.editorState = editorState;
+        this.commandExecutor = commandExecutor;
     }
 
     public void handle(DrawModeEvent drawModeEvent) {
         DrawModeCommand command = new DrawModeCommand(drawModeEvent.getNewDrawMode());
-        command.execute(this.editorState);
+        this.commandExecutor.execute(command);
     }
 
     public void handle(BoardEvent boardEvent) {
@@ -37,12 +40,12 @@ public class Editor {
         cursorPositionChanged(cursorPosition);
         if (this.drawingEnabled) {
             BoardEditCommand command = new BoardEditCommand(cursorPosition, this.editorState.getDrawModeProperty().get());
-            command.execute(this.editorState);
+            this.commandExecutor.execute(command);
         }
     }
 
     private void cursorPositionChanged(CellPosition cursorPosition) {
         EditorCommand command = (state) -> state.getCursorPositionProperty().set(cursorPosition);
-        command.execute(this.editorState);
+        this.commandExecutor.execute(command);
     }
 }

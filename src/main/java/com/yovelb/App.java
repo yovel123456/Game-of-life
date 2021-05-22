@@ -1,5 +1,6 @@
 package com.yovelb;
 
+import com.yovelb.command.CommandExecutor;
 import com.yovelb.logic.*;
 import com.yovelb.logic.editor.BoardEvent;
 import com.yovelb.logic.editor.DrawModeEvent;
@@ -10,6 +11,7 @@ import com.yovelb.model.Board;
 import com.yovelb.model.BoundedBoard;
 import com.yovelb.state.EditorState;
 import com.yovelb.state.SimulatorState;
+import com.yovelb.state.StateRegistry;
 import com.yovelb.util.event.EventBus;
 import com.yovelb.view.InfoBar;
 import com.yovelb.view.MainView;
@@ -24,19 +26,24 @@ public class App extends Application {
     @Override
     public void start(Stage stage) {
         EventBus eventBus = new EventBus();
+        StateRegistry stateRegistry = new StateRegistry();
+        CommandExecutor commandExecutor = new CommandExecutor(stateRegistry);
 
         ApplicationStateManager appStateManager = new ApplicationStateManager();
         BoardViewModel boardViewModel = new BoardViewModel();
         Board initialBoard = new BoundedBoard(20, 12);
 
         EditorState editorState = new EditorState(initialBoard);
-        Editor editor = new Editor(editorState);
+        stateRegistry.registerState(EditorState.class, editorState);
+        Editor editor = new Editor(editorState, commandExecutor);
         eventBus.listenFor(DrawModeEvent.class, editor::handle);
         eventBus.listenFor(BoardEvent.class, editor::handle);
         editorState.getCursorPositionProperty().listen(cursorPosition -> boardViewModel.getCursorPositionProperty().set(cursorPosition));
 
         SimulatorState simulatorState = new SimulatorState(initialBoard);
-        Simulator simulator = new Simulator(appStateManager, simulatorState);
+        stateRegistry.registerState(SimulatorState.class, simulatorState);
+
+        Simulator simulator = new Simulator(appStateManager, simulatorState, commandExecutor);
         eventBus.listenFor(SimulatorEvent.class, simulator::handle);
         editorState.getBoardProperty().listen(editorBoard -> {
             simulatorState.getBoardProperty().set(editorBoard);
@@ -63,7 +70,6 @@ public class App extends Application {
         editorState.getCursorPositionProperty().listen(cursorPosition -> infoBarViewModel.getCursorPositionProperty().set(cursorPosition));
 
         InfoBar infoBar = new InfoBar(infoBarViewModel);
-
 
         MainView mainView = new MainView(eventBus);
 

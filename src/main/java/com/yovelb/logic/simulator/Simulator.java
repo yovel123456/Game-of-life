@@ -1,5 +1,6 @@
 package com.yovelb.logic.simulator;
 
+import com.yovelb.command.CommandExecutor;
 import com.yovelb.logic.ApplicationState;
 import com.yovelb.logic.ApplicationStateManager;
 import com.yovelb.logic.SimulatorCommand;
@@ -16,11 +17,13 @@ public class Simulator {
     private Simulation simulation;
 
     private final SimulatorState state;
+    private final CommandExecutor commandExecutor;
     private boolean reset = true;
 
-    public Simulator(ApplicationStateManager applicationStateManager, SimulatorState state) {
+    public Simulator(ApplicationStateManager applicationStateManager, SimulatorState state, CommandExecutor commandExecutor) {
         this.applicationStateManager = applicationStateManager;
         this.state = state;
+        this.commandExecutor = commandExecutor;
 
         this.timeline = new Timeline(new KeyFrame(Duration.millis(500), e -> this.doStep()));
         this.timeline.setCycleCount(Timeline.INDEFINITE);
@@ -50,10 +53,8 @@ public class Simulator {
             applicationStateManager.getAppStateProperty().set(ApplicationState.SIMULATING);
         }
         this.simulation.step();
-        SimulatorCommand command = (state) -> {
-            state.getBoardProperty().set(simulation.getBoard());
-        };
-        command.execute(this.state);
+        SimulatorCommand command = (state) -> state.getBoardProperty().set(simulation.getBoard());
+        commandExecutor.execute(command);
     }
 
     private void start() {
