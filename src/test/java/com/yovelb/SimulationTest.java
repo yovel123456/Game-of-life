@@ -1,6 +1,6 @@
 package com.yovelb;
 
-import com.yovelb.model.*;
+import com.yovelb.gol.model.*;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

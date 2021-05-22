@@ -1,9 +1,9 @@
 module com.yovelb {
     requires transitive javafx.controls;
-    exports com.yovelb;
-    exports com.yovelb.model;
-    exports com.yovelb.viewmodel;
-    exports com.yovelb.util;
-    exports com.yovelb.util.event;
+    exports com.yovelb.gol.model;
+    exports com.yovelb.gol.viewmodel;
+    exports com.yovelb.app.event;
+    exports com.yovelb.app.observable;
+    exports com.yovelb.gol;
 
 }

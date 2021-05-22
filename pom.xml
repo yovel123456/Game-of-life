@@ -44,7 +44,7 @@
                     <launcher>golsim</launcher>
                     <jlinkImageName>golf</jlinkImageName>
                     <jlinkZipName>golzip</jlinkZipName>
-                    <mainClass>com.yovelb.App</mainClass>
+                    <mainClass>com.yovelb.gol.App</mainClass>
                 </configuration>
             </plugin>
         </plugins>
