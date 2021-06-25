@@ -10,9 +10,22 @@ import javafx.scene.layout.BorderPane;
 public class MainView extends BorderPane {
     private final EventBus eventBus;
 
+    private SimulationCanvas canvas;
+
     public MainView(EventBus eventBus) {
         this.eventBus = eventBus;
+
+        this.canvas = new SimulationCanvas(this.eventBus);
+        Toolbar toolbar = new Toolbar(this.eventBus);
+
+        this.setCenter(this.canvas);
+        this.setTop(toolbar);
+
         this.setOnKeyPressed(this::onKeyPressed);
+    }
+
+    public void addDrawLayer(DrawLayer drawLayer) {
+        this.canvas.addDrawLayer(drawLayer);
     }
 
     private void onKeyPressed(KeyEvent keyEvent) {

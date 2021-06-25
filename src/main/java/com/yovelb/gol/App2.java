@@ -3,6 +3,7 @@ package com.yovelb.gol;
 import com.yovelb.app.command.CommandExecutor;
 import com.yovelb.app.event.EventBus;
 import com.yovelb.app.state.StateRegistry;
+import com.yovelb.gol.logic.board.BoardApplicationComponent;
 import com.yovelb.gol.logic.editor.EditorApplicationComponent;
 import com.yovelb.gol.logic.simulator.SimulatorApplicationComponent;
 import com.yovelb.gol.view.MainView;
@@ -22,25 +23,24 @@ public class App2 extends Application {
         CommandExecutor commandExecutor = new CommandExecutor(stateRegistry);
 
         MainView mainView = new MainView(eventBus);
-//        mainView.setTop(toolbar);
-//        mainView.setCenter(simulationCanvas);
 //        mainView.setBottom(infoBar);
 
-        ApplicationContext context = new ApplicationContext(eventBus, stateRegistry, commandExecutor, mainView, 20, 12);
+        ApplicationContext context = new ApplicationContext(eventBus, commandExecutor, stateRegistry, mainView, 20, 12);
 
         List<ApplicationComponent> components = new LinkedList<>();
         components.add(new EditorApplicationComponent());
         components.add(new SimulatorApplicationComponent());
-
-        for (ApplicationComponent component : components) {
-            component.initComponent(context);
-        }
+        components.add(new BoardApplicationComponent());
 
         for (ApplicationComponent component : components) {
             component.initState(context);
         }
 
-        Scene scene = new Scene(mainView, 1000, 800);
+        for (ApplicationComponent component : components) {
+            component.initComponent(context);
+        }
+
+        Scene scene = new Scene(mainView, 1200, 800);
         stage.setScene(scene);
         stage.show();
     }

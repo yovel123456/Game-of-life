@@ -1,12 +1,8 @@
 package com.yovelb.gol.view;
 
-import com.yovelb.gol.model.Board;
-import com.yovelb.gol.model.CellPosition;
-import com.yovelb.gol.model.CellState;
-import com.yovelb.app.observable.Property;
 import com.yovelb.app.event.EventBus;
 import com.yovelb.gol.logic.editor.BoardEvent;
-import com.yovelb.gol.viewmodel.BoardViewModel;
+import com.yovelb.gol.model.CellPosition;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -16,18 +12,20 @@ import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+
 public class SimulationCanvas extends Pane {
     private final Canvas canvas;
     private final Affine affine;
-    private final BoardViewModel boardViewModel;
-    private final EventBus eventBus;
 
-    public SimulationCanvas(BoardViewModel boardViewModel, EventBus eventBus) {
-        this.boardViewModel = boardViewModel;
+    private final EventBus eventBus;
+    private final List<DrawLayer> drawLayers = new LinkedList<>();
+
+    public SimulationCanvas(EventBus eventBus) {
         this.eventBus = eventBus;
 
-        this.boardViewModel.getBoardProperty().listen(this::draw);
-        this.boardViewModel.getCursorPositionProperty().listen(cellPosition -> draw(boardViewModel.getBoardProperty().get()));
 
         this.affine = new Affine();
         this.affine.appendScale(400 / 10f, 400 / 10f);
@@ -46,7 +44,13 @@ public class SimulationCanvas extends Pane {
     @Override
     public void resize(double width, double height) {
         super.resize(width, height);
-        draw(this.boardViewModel.getBoardProperty().get());
+        draw();
+    }
+
+    public void addDrawLayer(DrawLayer drawLayer) {
+        drawLayers.add(drawLayer);
+        drawLayers.sort(Comparator.comparingInt(DrawLayer::getLayer));
+        drawLayer.addInvalidationListener(this::draw);
     }
 
     private void handleCursorMoved(MouseEvent event) {
@@ -69,41 +73,15 @@ public class SimulationCanvas extends Pane {
         }
     }
 
-    public void draw(Board newBoard) {
-        GraphicsContext g = this.canvas.getGraphicsContext2D();
-        g.setTransform(affine);
+    public void draw() {
+        GraphicsContext gc = this.canvas.getGraphicsContext2D();
+        gc.setTransform(affine);
 
-        g.setFill(Color.LIGHTGRAY);
-        g.fillRect(0, 0, 400, 400);
+        gc.setFill(Color.LIGHTGRAY);
+        gc.fillRect(0, 0, 400, 400);
 
-        this.drawSimulation(newBoard);
-
-        Property<CellPosition> cursorPositionProperty = this.boardViewModel.getCursorPositionProperty();
-        if (cursorPositionProperty.isPresent()) {
-            CellPosition cursor = cursorPositionProperty.get();
-            g.setFill(new Color(0.3, 0.3, 0.3, 0.5));
-            g.fillRect(cursor.getX(), cursor.getY(), 1, 1);
-        }
-
-        g.setStroke(Color.GRAY);
-        g.setLineWidth(0.05);
-        for (int x = 0; x <= newBoard.getWidth(); x++) {
-            g.strokeLine(x, 0, x, newBoard.getHeight());
-        }
-        for (int y = 0; y <= newBoard.getHeight(); y++) {
-            g.strokeLine(0, y, newBoard.getWidth(), y);
-        }
-    }
-
-    private void drawSimulation(Board simulationToDraw) {
-        GraphicsContext g = canvas.getGraphicsContext2D();
-        g.setFill(Color.BLACK);
-        for (int x = 0; x < simulationToDraw.getWidth(); x++) {
-            for (int y = 0; y < simulationToDraw.getHeight(); y++) {
-                if (simulationToDraw.getState(x, y) == CellState.ALIVE) {
-                    g.fillRect(x, y, 1, 1);
-                }
-            }
+        for (DrawLayer drawLayer : drawLayers) {
+            drawLayer.draw(gc);
         }
     }
 }

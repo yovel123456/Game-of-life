@@ -8,7 +8,13 @@ import com.yovelb.gol.model.BoundedBoard;
 public class BoardApplicationComponent implements ApplicationComponent {
     @Override
     public void initComponent(ApplicationContext context) {
+        BoardState state = context.getStateRegistry().getState(BoardState.class);
 
+        BoardDrawLayer boardDrawLayer = new BoardDrawLayer(state);
+        GridDrawLayer gridDrawLayer = new GridDrawLayer(state);
+
+        context.getMainView().addDrawLayer(boardDrawLayer);
+        context.getMainView().addDrawLayer(gridDrawLayer);
     }
 
     @Override

@@ -1,8 +1,6 @@
 package com.yovelb.gol.logic.simulator;
 
 import com.yovelb.app.command.CommandExecutor;
-import com.yovelb.gol.logic.ApplicationState;
-import com.yovelb.gol.logic.ApplicationStateManager;
 import com.yovelb.gol.logic.SimulatorCommand;
 import com.yovelb.gol.model.Simulation;
 import com.yovelb.gol.model.StandardRule;
@@ -13,15 +11,13 @@ import javafx.util.Duration;
 
 public class Simulator {
     private final Timeline timeline;
-    private final ApplicationStateManager applicationStateManager;
     private Simulation simulation;
 
     private final SimulatorState state;
     private final CommandExecutor commandExecutor;
     private boolean reset = true;
 
-    public Simulator(ApplicationStateManager applicationStateManager, SimulatorState state, CommandExecutor commandExecutor) {
-        this.applicationStateManager = applicationStateManager;
+    public Simulator(SimulatorState state, CommandExecutor commandExecutor) {
         this.state = state;
         this.commandExecutor = commandExecutor;
 
@@ -50,7 +46,7 @@ public class Simulator {
         if (reset) {
             reset = false;
             this.simulation = new Simulation(state.getBoardProperty().get(), new StandardRule());
-            applicationStateManager.getAppStateProperty().set(ApplicationState.SIMULATING);
+            this.state.getSimulating().set(true);
         }
         this.simulation.step();
         SimulatorCommand command = (state) -> state.getBoardProperty().set(simulation.getBoard());
@@ -67,6 +63,6 @@ public class Simulator {
 
     private void reset() {
         reset = true;
-        this.applicationStateManager.getAppStateProperty().set(ApplicationState.EDITING);
+        this.state.getSimulating().set(true);
     }
 }

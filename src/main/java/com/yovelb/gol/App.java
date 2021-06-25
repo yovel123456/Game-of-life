@@ -29,7 +29,7 @@ public class App extends Application {
         StateRegistry stateRegistry = new StateRegistry();
         CommandExecutor commandExecutor = new CommandExecutor(stateRegistry);
 
-        ApplicationStateManager appStateManager = new ApplicationStateManager();
+        //ApplicationStateManager appStateManager = new ApplicationStateManager();
         BoardViewModel boardViewModel = new BoardViewModel();
         Board initialBoard = new BoundedBoard(20, 12);
 
@@ -43,7 +43,7 @@ public class App extends Application {
         SimulatorState simulatorState = new SimulatorState(initialBoard);
         stateRegistry.registerState(SimulatorState.class, simulatorState);
 
-        Simulator simulator = new Simulator(appStateManager, simulatorState, commandExecutor);
+        Simulator simulator = new Simulator(simulatorState, commandExecutor);
         eventBus.listenFor(SimulatorEvent.class, simulator::handle);
         editorState.getBoardProperty().listen(editorBoard -> {
             simulatorState.getBoardProperty().set(editorBoard);
@@ -51,18 +51,18 @@ public class App extends Application {
         });
         simulatorState.getBoardProperty().listen(simulationBoard -> boardViewModel.getBoardProperty().set(simulationBoard));
 
-        appStateManager.getAppStateProperty().listen(editor::onAppStateChanged);
+        /*appStateManager.getAppStateProperty().listen(editor::onAppStateChanged);
         appStateManager.getAppStateProperty().listen(newState -> {
             if (newState == ApplicationState.EDITING) {
                 Board currentBoard = editorState.getBoardProperty().get();
                 boardViewModel.getBoardProperty().set(currentBoard);
                 simulatorState.getBoardProperty().set(currentBoard);
             }
-        });
+        });*/
 
         boardViewModel.getBoardProperty().set(initialBoard);
 
-        SimulationCanvas simulationCanvas = new SimulationCanvas(boardViewModel, eventBus);
+        SimulationCanvas simulationCanvas = new SimulationCanvas(eventBus);
         Toolbar toolbar = new Toolbar(eventBus);
 
         InfoBarViewModel infoBarViewModel = new InfoBarViewModel();

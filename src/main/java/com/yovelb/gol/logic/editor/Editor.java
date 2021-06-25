@@ -1,7 +1,7 @@
 package com.yovelb.gol.logic.editor;
 
 import com.yovelb.app.command.CommandExecutor;
-import com.yovelb.gol.logic.ApplicationState;
+import com.yovelb.gol.logic.simulator.SimulatorEvent;
 import com.yovelb.gol.model.CellPosition;
 import com.yovelb.gol.state.EditorState;
 
@@ -32,8 +32,12 @@ public class Editor {
         }
     }
 
-    public void onAppStateChanged(ApplicationState state) {
-        drawingEnabled = state == ApplicationState.EDITING;
+    public void handleSimulatorEvent(SimulatorEvent event) {
+        if (event.getEventType() == SimulatorEvent.Type.RESET) {
+            drawingEnabled = true;
+        } else if (event.getEventType() == SimulatorEvent.Type.START || event.getEventType() == SimulatorEvent.Type.STEP) {
+            drawingEnabled = false;
+        }
     }
 
     private void boardPress(CellPosition cursorPosition) {
