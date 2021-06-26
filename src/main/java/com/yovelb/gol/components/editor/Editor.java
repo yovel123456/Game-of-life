@@ -3,6 +3,7 @@ package com.yovelb.gol.components.editor;
 import com.yovelb.app.command.CommandExecutor;
 import com.yovelb.gol.components.simulator.SimulatorEvent;
 import com.yovelb.gol.model.CellPosition;
+import com.yovelb.gol.model.CellState;
 import com.yovelb.gol.state.EditorState;
 
 public class Editor {
@@ -43,8 +44,13 @@ public class Editor {
     private void boardPress(CellPosition cursorPosition) {
         cursorPositionChanged(cursorPosition);
         if (this.drawingEnabled) {
-            BoardEditCommand command = new BoardEditCommand(cursorPosition, this.editorState.getDrawModeProperty().get());
-            this.commandExecutor.execute(command);
+            CellState currentState = editorState.getBoardProperty().get().getState(cursorPosition.getX(), cursorPosition.getY());
+            CellState newState = this.editorState.getDrawModeProperty().get();
+
+            if (currentState != newState) {
+                BoardEditCommand command = new BoardEditCommand(cursorPosition, newState, currentState);
+                this.commandExecutor.execute(command);
+            }
         }
     }
 
