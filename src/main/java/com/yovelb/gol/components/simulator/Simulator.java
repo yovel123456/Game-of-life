@@ -1,7 +1,7 @@
-package com.yovelb.gol.logic.simulator;
+package com.yovelb.gol.components.simulator;
 
 import com.yovelb.app.command.CommandExecutor;
-import com.yovelb.gol.logic.SimulatorCommand;
+import com.yovelb.gol.components.SimulatorCommand;
 import com.yovelb.gol.model.Simulation;
 import com.yovelb.gol.model.StandardRule;
 import com.yovelb.gol.state.SimulatorState;

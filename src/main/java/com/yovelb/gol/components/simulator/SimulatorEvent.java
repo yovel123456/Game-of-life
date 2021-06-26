@@ -1,4 +1,4 @@
-package com.yovelb.gol.logic.simulator;
+package com.yovelb.gol.components.simulator;
 
 import com.yovelb.app.event.Event;
 

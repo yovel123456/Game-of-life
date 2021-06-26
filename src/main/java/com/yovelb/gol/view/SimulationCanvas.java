@@ -1,7 +1,7 @@
 package com.yovelb.gol.view;
 
 import com.yovelb.app.event.EventBus;
-import com.yovelb.gol.logic.editor.BoardEvent;
+import com.yovelb.gol.components.editor.BoardEvent;
 import com.yovelb.gol.model.CellPosition;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;

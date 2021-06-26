@@ -1,6 +1,5 @@
-package com.yovelb.gol.logic.editor;
+package com.yovelb.gol.components.editor;
 
-import com.yovelb.app.observable.Property;
 import com.yovelb.gol.model.CellPosition;
 import com.yovelb.gol.state.EditorState;
 import com.yovelb.gol.view.DrawLayerImplementation;

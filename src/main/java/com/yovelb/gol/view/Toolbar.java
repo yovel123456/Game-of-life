@@ -1,7 +1,7 @@
 package com.yovelb.gol.view;
 
-import com.yovelb.gol.logic.editor.DrawModeEvent;
-import com.yovelb.gol.logic.simulator.SimulatorEvent;
+import com.yovelb.gol.components.editor.DrawModeEvent;
+import com.yovelb.gol.components.simulator.SimulatorEvent;
 import com.yovelb.gol.model.CellState;
 import com.yovelb.app.event.EventBus;
 import javafx.event.ActionEvent;

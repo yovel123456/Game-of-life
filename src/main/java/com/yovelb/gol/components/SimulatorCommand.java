@@ -1,4 +1,4 @@
-package com.yovelb.gol.logic;
+package com.yovelb.gol.components;
 
 import com.yovelb.app.command.Command;
 import com.yovelb.gol.state.SimulatorState;

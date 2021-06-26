@@ -1,4 +1,4 @@
-package com.yovelb.gol.logic.editor;
+package com.yovelb.gol.components.editor;
 
 import com.yovelb.gol.model.Board;
 import com.yovelb.gol.model.CellPosition;

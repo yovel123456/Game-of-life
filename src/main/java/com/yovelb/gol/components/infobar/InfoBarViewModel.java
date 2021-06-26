@@ -1,4 +1,4 @@
-package com.yovelb.gol.viewmodel;
+package com.yovelb.gol.components.infobar;
 
 import com.yovelb.gol.model.CellPosition;
 import com.yovelb.gol.model.CellState;

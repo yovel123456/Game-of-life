@@ -1,4 +1,4 @@
-package com.yovelb.gol.logic.board;
+package com.yovelb.gol.components.board;
 
 import com.yovelb.gol.ApplicationComponent;
 import com.yovelb.gol.ApplicationContext;

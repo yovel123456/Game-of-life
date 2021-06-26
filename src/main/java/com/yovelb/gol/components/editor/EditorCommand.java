@@ -1,4 +1,4 @@
-package com.yovelb.gol.logic.editor;
+package com.yovelb.gol.components.editor;
 
 import com.yovelb.app.command.Command;
 import com.yovelb.gol.state.EditorState;

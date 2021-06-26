@@ -1,7 +1,7 @@
 package com.yovelb.util;
 
 import com.yovelb.app.observable.Property;
-import com.yovelb.app.observable.SimpleChangeListener;
+import com.yovelb.app.observable.ChangeListener;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,12 +36,12 @@ class PropertyTest {
         assertEquals(expected, listener.value);
     }
 
-    private static class DoubleListener implements SimpleChangeListener<Double> {
+    private static class DoubleListener implements ChangeListener<Double> {
         private boolean notified = false;
         private double value;
 
         @Override
-        public void valueChanged(Double value) {
+        public void onChanged(Double value) {
             notified = true;
             this.value = value;
         }

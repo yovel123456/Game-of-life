@@ -1,8 +1,7 @@
-package com.yovelb.gol.view;
+package com.yovelb.gol.components.infobar;
 
 import com.yovelb.gol.model.CellPosition;
 import com.yovelb.gol.model.CellState;
-import com.yovelb.gol.viewmodel.InfoBarViewModel;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;

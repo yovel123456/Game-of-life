@@ -1,7 +1,7 @@
-package com.yovelb.gol.logic.editor;
+package com.yovelb.gol.components.editor;
 
 import com.yovelb.app.command.CommandExecutor;
-import com.yovelb.gol.logic.simulator.SimulatorEvent;
+import com.yovelb.gol.components.simulator.SimulatorEvent;
 import com.yovelb.gol.model.CellPosition;
 import com.yovelb.gol.state.EditorState;
 

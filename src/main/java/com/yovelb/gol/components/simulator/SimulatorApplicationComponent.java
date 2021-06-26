@@ -1,8 +1,8 @@
-package com.yovelb.gol.logic.simulator;
+package com.yovelb.gol.components.simulator;
 
 import com.yovelb.gol.ApplicationComponent;
 import com.yovelb.gol.ApplicationContext;
-import com.yovelb.gol.logic.board.BoardState;
+import com.yovelb.gol.components.board.BoardState;
 import com.yovelb.gol.model.Board;
 import com.yovelb.gol.model.BoundedBoard;
 import com.yovelb.gol.state.EditorState;
