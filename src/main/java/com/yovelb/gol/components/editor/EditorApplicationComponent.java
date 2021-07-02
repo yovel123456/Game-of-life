@@ -25,17 +25,11 @@ public class EditorApplicationComponent implements ApplicationComponent {
 
         editorState.getBoardProperty().listen(boardState.getBoardProperty()::set);
 
-        /* appStateManager.getAppStateProperty().listen(editor::onAppStateChanged);
-        appStateManager.getAppStateProperty().listen(newState -> {
-            if (newState == ApplicationState.EDITING) {
-                Board currentBoard = editorState.getBoardProperty().get();
-                boardViewModel.getBoardProperty().set(currentBoard);
-                simulatorState.getBoardProperty().set(currentBoard);
-            }
-        });*/
-
         ToolDrawLayer toolDrawLayer = new ToolDrawLayer(editorState);
         context.getMainView().addDrawLayer(toolDrawLayer);
+
+        CurrentEditDrawLayer editDrawLayer = new CurrentEditDrawLayer(editorState);
+        context.getMainView().addDrawLayer(editDrawLayer);
     }
 
     @Override
