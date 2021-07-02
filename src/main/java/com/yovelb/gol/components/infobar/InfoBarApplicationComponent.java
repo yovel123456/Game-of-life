@@ -2,7 +2,7 @@ package com.yovelb.gol.components.infobar;
 
 import com.yovelb.gol.ApplicationComponent;
 import com.yovelb.gol.ApplicationContext;
-import com.yovelb.gol.state.EditorState;
+import com.yovelb.gol.components.editor.EditorState;
 
 public class InfoBarApplicationComponent implements ApplicationComponent {
     @Override
