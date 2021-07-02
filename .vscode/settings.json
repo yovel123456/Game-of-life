@@ -1,4 +1,7 @@
 {
     "maven.view": "hierarchical",
-    "java.configuration.updateBuildConfiguration": "automatic"
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "editor.mouseWheelZoom": true,
+    "files.autoSave": "onWindowChange",
+    "workbench.settings.openDefaultKeybindings": true
 }

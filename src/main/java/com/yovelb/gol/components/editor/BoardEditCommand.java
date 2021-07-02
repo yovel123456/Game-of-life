@@ -1,32 +1,29 @@
 package com.yovelb.gol.components.editor;
 
 import com.yovelb.gol.model.Board;
-import com.yovelb.gol.model.CellPosition;
-import com.yovelb.gol.model.CellState;
-import com.yovelb.gol.state.EditorState;
 
 public class BoardEditCommand implements UndoableEditorCommand {
-    private final CellPosition cursorPosition;
-    private final CellState drawMode;
-    private CellState prevState;
+    private final Edit edit;
 
-    public BoardEditCommand(CellPosition cursorPosition, CellState drawMode, CellState prevState) {
-        this.cursorPosition = cursorPosition;
-        this.drawMode = drawMode;
-        this.prevState = prevState;
+    public BoardEditCommand(Edit edit) {
+        this.edit = new Edit(edit);
     }
 
     @Override
     public void execute(EditorState editorState) {
         Board board = editorState.getBoardProperty().get();
-        board.setState(cursorPosition.getX(), cursorPosition.getY(), drawMode);
+        for (Change change : edit) {
+            board.setState(change.getCellPosition().getX(), change.getCellPosition().getY(), change.getNextState());
+        }
         editorState.getBoardProperty().set(board);
     }
 
     @Override
     public void undo(EditorState editorState) {
         Board board = editorState.getBoardProperty().get();
-        board.setState(cursorPosition.getX(), cursorPosition.getY(), prevState);
+        for (Change change : edit) {
+            board.setState(change.getCellPosition().getX(), change.getCellPosition().getY(), change.getPrevState());
+        }
         editorState.getBoardProperty().set(board);
     }
 }

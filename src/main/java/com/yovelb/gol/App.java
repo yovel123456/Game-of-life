@@ -24,7 +24,6 @@ public class App extends Application {
         CommandExecutor commandExecutor = new CommandExecutor(stateRegistry);
 
         MainView mainView = new MainView(eventBus, commandExecutor);
-//        mainView.setBottom(infoBar);
 
         ApplicationContext context = new ApplicationContext(eventBus, commandExecutor, stateRegistry, mainView, 20, 12);
 

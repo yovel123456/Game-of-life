@@ -4,7 +4,6 @@ import com.yovelb.app.command.CommandExecutor;
 import com.yovelb.gol.components.simulator.SimulatorEvent;
 import com.yovelb.gol.model.CellPosition;
 import com.yovelb.gol.model.CellState;
-import com.yovelb.gol.state.EditorState;
 
 public class Editor {
     private final EditorState editorState;
@@ -23,34 +22,50 @@ public class Editor {
     }
 
     public void handle(BoardEvent boardEvent) {
+        cursorPositionChanged(boardEvent.getCursorPosition());
         switch (boardEvent.getEventType()) {
-            case CURSOR_MOVED:
-                cursorPositionChanged(boardEvent.getCursorPosition());
+            case PRESSED:
+                beginEdit();
+                handleEdit(boardEvent.getCursorPosition());
                 break;
-            case CURSOR_PRESSED:
-                boardPress(boardEvent.getCursorPosition());
+            case CURSOR_MOVED:
+                if (this.editorState.getEditInProgress().get()) {
+                    handleEdit(boardEvent.getCursorPosition());
+                }
+                break;
+            case RELEASED:
+                handleEdit(boardEvent.getCursorPosition());
+                endEdit();
                 break;
         }
+    }
+
+    private void beginEdit() {
+        this.editorState.getEditInProgress().set(true);
+        this.editorState.getCurrentEdit().set(new Edit());
+    }
+
+    private void endEdit() {
+        BoardEditCommand editCommand = new BoardEditCommand(this.editorState.getCurrentEdit().get());
+        this.commandExecutor.execute(editCommand);
+        this.editorState.getEditInProgress().set(false);
+        this.editorState.getCurrentEdit().set(null);
     }
 
     public void handleSimulatorEvent(SimulatorEvent event) {
         if (event.getEventType() == SimulatorEvent.Type.RESET) {
-            drawingEnabled = true;
+            this.drawingEnabled = true;
         } else if (event.getEventType() == SimulatorEvent.Type.START || event.getEventType() == SimulatorEvent.Type.STEP) {
-            drawingEnabled = false;
+            this.drawingEnabled = false;
         }
     }
 
-    private void boardPress(CellPosition cursorPosition) {
-        cursorPositionChanged(cursorPosition);
+    private void handleEdit(CellPosition cursorPosition) {
         if (this.drawingEnabled) {
             CellState currentState = editorState.getBoardProperty().get().getState(cursorPosition.getX(), cursorPosition.getY());
             CellState newState = this.editorState.getDrawModeProperty().get();
-
-            if (currentState != newState) {
-                BoardEditCommand command = new BoardEditCommand(cursorPosition, newState, currentState);
-                this.commandExecutor.execute(command);
-            }
+            Change change = new Change(cursorPosition, newState, currentState);
+            this.editorState.getCurrentEdit().get().add(change);
         }
     }
 

@@ -31,8 +31,9 @@ public class SimulationCanvas extends Pane {
         this.affine.appendScale(400 / 10f, 400 / 10f);
 
         this.canvas = new Canvas(400, 400);
-        this.canvas.setOnMouseClicked(this::handleDraw);
-        this.canvas.setOnMouseDragged(this::handleDraw);
+        this.canvas.setOnMousePressed(this::handlePressed);
+        this.canvas.setOnMouseReleased(this::handleReleased);
+        this.canvas.setOnMouseDragged(this::handleCursorMoved);
         this.canvas.setOnMouseMoved(this::handleCursorMoved);
 
         this.canvas.widthProperty().bind(this.widthProperty());
@@ -58,9 +59,14 @@ public class SimulationCanvas extends Pane {
         this.eventBus.emit(new BoardEvent(BoardEvent.Type.CURSOR_MOVED, cursorPosition));
     }
 
-    private void handleDraw(MouseEvent event) {
+    private void handlePressed(MouseEvent event) {
         CellPosition cursorPosition = getSimulationCoordinates(event);
-        this.eventBus.emit(new BoardEvent(BoardEvent.Type.CURSOR_PRESSED, cursorPosition));
+        this.eventBus.emit(new BoardEvent(BoardEvent.Type.PRESSED, cursorPosition));
+    }
+    
+    private void handleReleased(MouseEvent event) {
+        CellPosition cursorPosition = getSimulationCoordinates(event);
+        this.eventBus.emit(new BoardEvent(BoardEvent.Type.RELEASED, cursorPosition));
     }
 
     private CellPosition getSimulationCoordinates(MouseEvent event) {

@@ -7,7 +7,8 @@ public class BoardEvent implements Event {
 
     public enum Type {
         CURSOR_MOVED,
-        CURSOR_PRESSED
+        PRESSED,
+        RELEASED
     }
 
     private final Type eventType;

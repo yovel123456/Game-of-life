@@ -5,7 +5,7 @@ import com.yovelb.gol.ApplicationContext;
 import com.yovelb.gol.components.board.BoardState;
 import com.yovelb.gol.model.Board;
 import com.yovelb.gol.model.BoundedBoard;
-import com.yovelb.gol.state.EditorState;
+import com.yovelb.gol.components.editor.EditorState;
 import com.yovelb.gol.state.SimulatorState;
 
 public class SimulatorApplicationComponent implements ApplicationComponent {

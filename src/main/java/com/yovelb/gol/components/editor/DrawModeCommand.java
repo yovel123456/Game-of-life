@@ -1,7 +1,6 @@
 package com.yovelb.gol.components.editor;
 
 import com.yovelb.gol.model.CellState;
-import com.yovelb.gol.state.EditorState;
 
 public class DrawModeCommand implements EditorCommand{
     private final CellState newDrawMode;

@@ -1,7 +1,6 @@
 package com.yovelb.gol.components.editor;
 
 import com.yovelb.gol.model.CellPosition;
-import com.yovelb.gol.state.EditorState;
 import com.yovelb.gol.view.DrawLayerImplementation;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;

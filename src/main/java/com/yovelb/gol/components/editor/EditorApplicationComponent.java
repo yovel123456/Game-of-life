@@ -6,7 +6,6 @@ import com.yovelb.gol.components.board.BoardState;
 import com.yovelb.gol.components.simulator.SimulatorEvent;
 import com.yovelb.gol.model.Board;
 import com.yovelb.gol.model.BoundedBoard;
-import com.yovelb.gol.state.EditorState;
 
 public class EditorApplicationComponent implements ApplicationComponent {
     @Override
